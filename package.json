@@ -1,0 +1,31 @@
+{
+  "name": "kokoanlp",
+  "version": "0.1.0",
+  "description": "Korean Kernel Object Analyzer",
+  "main": "lib/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "hangul-js": "^0.2.4"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.11.0"
+  },
+  "scripts": {
+    "lint": "eslint lib",
+    "lint:fix": "eslint lib --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Astro36/Kokoa.git"
+  },
+  "author": "Astro36 <astr36@naver.com>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Astro36/Kokoa/issues"
+  },
+  "homepage": "https://github.com/Astro36/Kokoa#readme"
+}
