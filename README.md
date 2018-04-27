@@ -1,2 +1,3 @@
 # Kokoa
-Korean Morpheme Analyzer
+
+Korean Kernel Object Analyzer
