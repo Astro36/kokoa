@@ -1,6 +1,6 @@
 # KokoaNLP
 
-Korean Kernel Object Analyzer
+> Semi-supervised Learning Korean Kernel Object Analyzer
 
 ## License
 

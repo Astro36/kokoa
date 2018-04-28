@@ -18,10 +18,10 @@ const fs = require('fs');
 
 const { Kokoa, KokoaUtils, TrainableDictionary } = require('../lib');
 
-const dictionary = new TrainableDictionary({
-  서: '명사', 설: '명사', 설현: '명사', 노래: '명사', 부르: '동사', 춤: '명사', 추다: '명사',
-});
+const dictionary = new TrainableDictionary();
+dictionary.train(fs.readFileSync('./data/the-battle-of-midway.txt').toString())
+
 const kokoa = new Kokoa();
 kokoa.load(dictionary);
 
-console.log(KokoaUtils.stringify(kokoa.run('설혀니 노랠 부른다ㄱㄱ "그리고" 춤을 춘다.. gk".')));
+console.log(KokoaUtils.stringify(kokoa.run('거기에다 미드웨이에서 출격한 항공기들의 공격과 이들을 막으려는 제로센들의 요격이 진행되는 와중에 1차 공격대가 함대 상공에 도착해서 착함을 기다리는 등 바다와 하늘 모두 난장판이었다.')));
