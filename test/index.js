@@ -18,8 +18,8 @@ const fs = require('fs');
 
 const { Kokoa, KokoaUtils, TrainableDictionary } = require('../lib');
 
-const dictionary = new TrainableDictionary();
-dictionary.train(fs.readFileSync('./data/the-battle-of-midway.txt').toString())
+const dictionary = new TrainableDictionary(JSON.parse(fs.readFileSync('./data/nouns.json')));
+dictionary.train(fs.readFileSync('./data/the-battle-of-midway.txt').toString());
 
 const kokoa = new Kokoa();
 kokoa.load(dictionary);

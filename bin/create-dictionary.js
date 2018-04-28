@@ -21,12 +21,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 const fs = require('fs');
 const path = require('path');
 
-const { Dictionary, DictionaryConverter } = require('../lib');
+const { Dictionary, DictionaryUtils } = require('../lib');
 
 const args = process.argv.slice(2);
 
 if (args.length > 0) {
-  const dictionary = new Dictionary(DictionaryConverter.extractFrom(args[0], args.slice(1)));
+  const dictionary = new Dictionary(DictionaryUtils.extractFrom(args[0], args.slice(1)));
   const outputPath = path.join(path.dirname(args[0]), 'dictionary.json');
 
   if (fs.existsSync(outputPath)) {
