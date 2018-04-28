@@ -3,8 +3,14 @@
   "version": "0.1.0",
   "description": "Korean Kernel Object Analyzer",
   "main": "lib/index.js",
+  "keywords": [
+    "korean",
+    "analyzer",
+    "part-of-speech-tagger"
+  ],
   "directories": {
-    "lib": "lib"
+    "lib": "lib",
+    "test": "test"
   },
   "dependencies": {
     "hangul-js": "^0.2.4"
@@ -15,8 +21,9 @@
     "eslint-plugin-import": "^2.11.0"
   },
   "scripts": {
-    "lint": "eslint lib",
-    "lint:fix": "eslint lib --fix"
+    "lint": "eslint lib test",
+    "lint:fix": "eslint lib test --fix",
+    "test": "node test"
   },
   "repository": {
     "type": "git",

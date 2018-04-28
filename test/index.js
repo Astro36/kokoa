@@ -14,18 +14,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-const Dictionary = require('./dictionary/Dictionary');
-const TrainableDictionary = require('./dictionary/TrainableDictionary');
-const LRTokenizer = require('./tokenizer/LRTokenizer');
-const SentenceTokenizer = require('./tokenizer/SentenceTokenizer');
-const Kokoa = require('./Kokoa');
-const KokoaUtils = require('./KokoaUtils');
+const fs = require('fs');
 
-module.exports = {
-  Dictionary,
-  TrainableDictionary,
-  LRTokenizer,
-  SentenceTokenizer,
-  Kokoa,
-  KokoaUtils,
-};
+const { Kokoa, KokoaUtils, TrainableDictionary } = require('../lib');
+
+const dictionary = new TrainableDictionary({
+  서: '명사', 설: '명사', 설현: '명사', 노래: '명사', 부르: '동사', 춤: '명사', 추다: '명사',
+});
+const kokoa = new Kokoa();
+kokoa.load(dictionary);
+
+console.log(KokoaUtils.stringify(kokoa.run('설혀니 노랠 부른다ㄱㄱ "그리고" 춤을 춘다.. gk".')));
