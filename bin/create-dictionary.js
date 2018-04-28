@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /* KokoaNLP
 Copyright (C) 2018  Astro
 
@@ -14,34 +16,24 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-/**
- * Class representing a dictionary.
- */
-class Dictionary {
-  /**
-   * Create a dictionary with given words.
-   * @param {Object.<string, Array.<string>>} [words={}]
-   */
-  constructor(words = {}) {
-    this.words = words;
-  }
+/* eslint no-console: "off" */
 
-  /**
-   * Check if the dictionary has given word.
-   * @param {string} word
-   * @returns {boolean}
-   */
-  has(word) {
-    return word in this.words;
-  }
+const fs = require('fs');
+const path = require('path');
 
-  /**
-   * Returns a JSON string of the dictionary.
-   * @returns {string}
-   */
-  toJSON() {
-    return this.words;
+const { Dictionary, DictionaryConverter } = require('../lib');
+
+const args = process.argv.slice(2);
+
+if (args.length > 0) {
+  const dictionary = new Dictionary(DictionaryConverter.extractFrom(args[0], args.slice(1)));
+  const outputPath = path.join(path.dirname(args[0]), 'dictionary.json');
+
+  if (fs.existsSync(outputPath)) {
+    console.error(`Error: ${outputPath} already exists!`);
+  } else {
+    fs.writeFileSync(outputPath, JSON.stringify(dictionary));
   }
+} else {
+  console.error('Error: The file path must be given!');
 }
-
-module.exports = Dictionary;

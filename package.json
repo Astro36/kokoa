@@ -9,6 +9,7 @@
     "part-of-speech-tagger"
   ],
   "directories": {
+    "bin": "bin",
     "lib": "lib",
     "test": "test"
   },
@@ -21,8 +22,9 @@
     "eslint-plugin-import": "^2.11.0"
   },
   "scripts": {
-    "lint": "eslint lib test",
-    "lint:fix": "eslint lib test --fix",
+    "create-dictionary": "node bin/create-dictionary.js",
+    "lint": "eslint bin lib test",
+    "lint:fix": "eslint bin lib test --fix",
     "test": "node test"
   },
   "repository": {
