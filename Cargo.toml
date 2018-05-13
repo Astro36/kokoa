@@ -1,0 +1,7 @@
+[package]
+name = "kokoanlp"
+version = "0.1.0"
+authors = ["Astro36 <astr36@naver.com>"]
+
+[dependencies]
+hangeul = "0.1.3"
