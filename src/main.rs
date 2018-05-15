@@ -2,8 +2,12 @@ extern crate hangeul;
 extern crate regex;
 
 use regex::Regex;
+use std::collections::HashMap;
 
-fn compose_all(components: &Vec<(char, char, char)>) -> String {
+fn assemble(syllables: Vec<char>) -> String {
+    for c in syllables {
+
+    }
     components
         .into_iter()
         .map(|component| {
@@ -12,17 +16,19 @@ fn compose_all(components: &Vec<(char, char, char)>) -> String {
         .collect()
 }
 
-fn decompose_all(content: &str) -> Vec<(char, char, char)> {
-    content
+fn disassemble(string: &str) -> Vec<char> {
+    string
         .chars()
-        .map(|c| {
-            (
-                hangeul::get_choseong(c).unwrap_or(c),
-                hangeul::get_jungseong(c).unwrap_or_default(),
-                hangeul::get_jongseong(c)
-                    .unwrap_or_default()
-                    .unwrap_or_default(),
-            )
+        .flat_map(|c| {
+            let mut syllables = vec![
+                hangeul::get_choseong(c).unwrap(),
+                hangeul::get_jungseong(c).unwrap(),
+            ];
+            let jongseong = hangeul::get_jongseong(c).unwrap();
+            if jongseong.is_some() {
+                syllables.push(jongseong.unwrap());
+            }
+            syllables
         })
         .collect()
 }
@@ -50,29 +56,108 @@ fn split(content: &str) -> Vec<String> {
     chunks
 }
 
-pub struct Kokoa {}
+pub struct Kokoa {
+    word_frequency: HashMap<String, String>,
+}
 
 impl Kokoa {
     pub fn new() -> Kokoa {
-        Kokoa {}
+        Kokoa {
+            word_frequency: HashMap::new(),
+        }
     }
 
     pub fn train(&self, document: &str) -> bool {
-        println!("{}", &document);
+        let hangul = Regex::new("^[가-힣]+$").unwrap();
+        let chunks: String = split(&document)
+            .into_iter()
+            .filter(|chunk| hangul.is_match(&chunk))
+            .map(|chunk| {
+                // let subtexts = Vec::new();
+                let chars = disassemble(&chunk);
+                println!("{:?}", &chars);
+                for i in 0..chars.len() {
+                    println!("{}", i);
+                    // let subtext = assemble(&chars[0..i]);
+                    // println!("{}", &subtext);
+                    // if !hangeul::is_jaeum(&subtext[-1]) {
+                    //     subtexts.push(subtext);
+                    // }
+                }
+                chunk
+            })
+            .collect();
+        println!("{:?}", &chunks);
+        //     const { sentenceTokenizer, words } = this;
+        // const hangulRegex = /^[ㄱ-ㅎ가-힣]+$/;
+        // const chucks = flatten(sentenceTokenizer.run(document))
+        //   .filter(value => hangulRegex.test(value))
+        //   .map((chuck) => {
+        //     const subtexts = [];
+        //     const chars = Hangul.disassemble(chuck);
+        //     for (let i = 1, len = chars.length; i <= len; i += 1) {
+        //       const subtext = Hangul.assemble(chars.slice(0, i));
+        //       if (!Hangul.isConsonant(subtext[subtext.length - 1])) {
+        //         subtexts.push(subtext);
+        //       }
+        //     }
+        //     return subtexts;
+        //   });
+        // // Extract all words and count how many words appear.
+        // const counts = {};
+        // for (let i = 0, len = chucks.length; i < len; i += 1) {
+        //   const subtexts = chucks[i];
+        //   for (let j = 0, len2 = subtexts.length; j < len2; j += 1) {
+        //     const subtext = subtexts[j];
+        //     if (subtext in counts) {
+        //       counts[subtext] += 1;
+        //     } else {
+        //       counts[subtext] = 1;
+        //     }
+        //   }
+        // }
+        // // Calculate cohension n-gram value.
+        // const uniqueSubtexts = Object.keys(counts);
+        // const cohensions = {};
+        // for (let i = 0, len = uniqueSubtexts.length; i < len; i += 1) {
+        //   const subtext = uniqueSubtexts[i];
+        //   if (subtext.length === 1) {
+        //     cohensions[subtext] = 0.1;
+        //   } else {
+        //     const exp = 1 / Hangul.disassemble(subtext).length;
+        //     cohensions[subtext] = (counts[subtext] / counts[subtext[0]]) ** exp;
+        //   }
+        // }
+        // // Train new words.
+        // for (let i = 0, len = chucks.length; i < len; i += 1) {
+        //   const subtexts = chucks[i];
+        //   let word = null;
+        //   let score = 0;
+        //   for (let j = 0, len2 = subtexts.length; j < len2; j += 1) {
+        //     const subtext = subtexts[j];
+        //     const subtextCohension = cohensions[subtext];
+        //     if (subtextCohension >= score) {
+        //       word = subtext;
+        //       score = subtextCohension;
+        //     } else {
+        //       break;
+        //     }
+        //   }
+        //   if (!(word in words) && word.length > 1) {
+        //     words[word] = ['미지정'];
+        //   }
+        // }
         true
     }
 
     pub fn run(&self, document: &str) {
         println!("{}", &document);
-        let d = decompose_all(&document);
-        println!("{:?}", &d);
-        println!("{}", compose_all(&d));
     }
 }
 
 fn main() {
-    let sentence = "안녕하세요!";
+    let sentence = "안녕하세요ㄱㄱaa! 돼지";
     let kokoa = Kokoa::new();
-    kokoa.run(&sentence);
+    kokoa.train(&sentence);
     println!("{:?}", split("안녕ㅎㅎㅎㅎ12 4rr ?"))
 }
