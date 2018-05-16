@@ -1,6 +1,48 @@
 # KokoaNLP
 
-> Semi-supervised Learning Korean Kernel Object Analyzer
+> Supervised Learning Korean Kernel Object Analyzer
+
+[![npm](https://img.shields.io/npm/v/kokoanlp.svg?style=flat-square)](https://www.npmjs.com/package/kokoanlp) [![npm](https://img.shields.io/npm/dt/kokoanlp.svg?style=flat-square)](https://www.npmjs.com/package/kokoanlp)
+
+## ChangeLog
+
+See [CHANGELOG](./CHANGELOG.md)
+
+## Features
+
+- You can train your own model.
+- Extract words from the document.
+
+## Installation
+
+- Install with npm:
+
+```bash
+npm install kokoanlp --save
+```
+
+- Clone the repo:
+
+```bash
+git clone https://github.com/Astro36/Kokoa.git
+```
+
+## Usage
+
+### API Documentation
+
+See [API](http://astro36.github.io/Kokoa/index.html)
+
+### Example
+
+Extract words from the given document:
+
+```javascript
+const Kokoa = require('kokoanlp');
+const kokoa = Kokoa.load(yourModel);
+const words = kokoa.run('태평양 전쟁 개전 당시 일본 해군의 전략은 외곽 방어망 곳곳에 배치된 지상비행장이 방어의 근거지가 되고 유사시 적을 방어선 가까이 끌어들이는 동안 항공기를 집결하여 격퇴하는 것이었다.');
+console.log(words);
+```
 
 ## License
 
