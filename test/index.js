@@ -16,10 +16,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 const fs = require('fs');
 
-const { Kokoa, KokoaUtils, Dictionary } = require('../lib');
+const { Kokoa } = require('../lib');
 
-const dictionary = new Dictionary({});
+const kokoa = new Kokoa();
 
-const kokoa = new Kokoa(dictionary);
-
-console.log(KokoaUtils.stringify(kokoa.run('거기에다 미드웨이에서 출격한 항공기들의 공격과 이들을 막으려는 제로센들의 요격이 진행되는 와중에 1차 공격대가 함대 상공에 도착해서 착함을 기다리는 등 바다와 하늘 모두 난장판이었다.')));
+kokoa.train(fs.readFileSync('./data/the-battle-of-midway.txt').toString());
+console.log(kokoa.run('전황이 계속 불리하게 돌아가는 상황에서 당시 미군의 사기는 바닥까지 떨어진 상태였다'));
