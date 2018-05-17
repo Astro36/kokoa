@@ -9,13 +9,11 @@
     "part-of-speech-tagger"
   ],
   "directories": {
-    "bin": "bin",
     "lib": "lib",
     "test": "test"
   },
   "dependencies": {
-    "hangul-js": "^0.2.4",
-    "stream-json": "^0.6.1"
+    "hangul-js": "^0.2.4"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
@@ -23,8 +21,8 @@
     "eslint-plugin-import": "^2.11.0"
   },
   "scripts": {
-    "lint": "eslint bin lib test",
-    "lint:fix": "eslint bin lib test --fix",
+    "lint": "eslint lib test",
+    "lint:fix": "eslint lib test --fix",
     "test": "node test"
   },
   "repository": {
