@@ -18,7 +18,7 @@ const fs = require('fs');
 
 const Kokoa = require('../lib');
 
-const kokoa = new Kokoa()
+const kokoa = new Kokoa();
 kokoa.train(fs.readFileSync('./data/the-battle-of-midway.txt').toString());
 kokoa.update();
 // fs.writeFileSync('./data/namuwiki-words.json', JSON.stringify(kokoa.save()));
