@@ -10,7 +10,7 @@ See [CHANGELOG](./CHANGELOG.md)
 
 ## Features
 
-- You can train your own model.
+- Train your own model.
 - Extract words from the document.
 
 ## Installation
