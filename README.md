@@ -48,7 +48,7 @@ console.log(words);
 
 ```text
 KokoaNLP
-Copyright (C) 2018  Astro
+Copyright (C) 2018  Seungjae Park
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -65,3 +65,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ```
 
 KokoaNLP is licensed under the [GPL 3.0](./LICENSE).
+
+[Hangul.js](https://github.com/e-/Hangul.js) is licensed under a [MIT License](https://github.com/e-/Hangul.js/blob/master/LICENSE) by Jaemin Jo.
