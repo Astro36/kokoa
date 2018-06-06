@@ -65,5 +65,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ```
 
 KokoaNLP is licensed under the [GPL 3.0](./LICENSE).
-
-[Hangul.js](https://github.com/e-/Hangul.js) is licensed under a [MIT License](https://github.com/e-/Hangul.js/blob/master/LICENSE) by Jaemin Jo.

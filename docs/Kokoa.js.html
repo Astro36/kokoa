@@ -27,7 +27,7 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/* KokoaNLP
-Copyright (C) 2018  Astro
+Copyright (C) 2018  Seungjae Park
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -42,13 +42,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see &lt;http://www.gnu.org/licenses/>. */
 
-const Hangul = require('hangul-js');
+const fs = require('fs');
+const Hanguler = require('hanguler');
 
 // Subtext extractor cache
 const syllableRecipes = new Map();
 
 /**
- * Extract chunks from the given document.
+ * Extracts chunks from the given document.
  * @private
  * @param {string} document The document to extract subtexts.
  * @returns {Array.&lt;string>} Subtexts of the document.
@@ -73,7 +74,7 @@ const extractChunks = (document) => {
 };
 
 /**
- * Extract subtexts from the given chunk.
+ * Extracts subtexts and their complements from the given chunk.
  * @private
  * @param {string} chunk The document to extract chunks.
  * @returns {Array.&lt;string>} Chunks of the document.
@@ -83,11 +84,19 @@ const extractSubtexts = (chunk) => {
     return syllableRecipes.get(chunk);
   }
   const subtexts = [];
-  const chars = Hangul.disassemble(chunk);
+  const chars = Hanguler.flatDisassemble(chunk);
   for (let i = 1, len = chars.length; i &lt;= len; i += 1) {
-    const subtext = Hangul.assemble(chars.slice(0, i));
-    if (!Hangul.isConsonant(subtext[subtext.length - 1])) {
-      subtexts.push(subtext);
+    const subtext = Hanguler.flatAssemble(chars.slice(0, i));
+    if (!Hanguler.isConsonant(subtext[subtext.length - 1])) {
+      const others = chars.slice(i);
+      if (others.length >= 1) {
+        if (Hanguler.isVowel(others[0])) {
+          others.unshift('ㅇ');
+        }
+        subtexts.push([subtext, Hanguler.flatAssemble(others)]);
+      } else {
+        subtexts.push([subtext, '']);
+      }
     }
   }
   syllableRecipes.set(chunk, subtexts);
@@ -95,54 +104,67 @@ const extractSubtexts = (chunk) => {
 };
 
 /**
- * Object representing KokoaNLP model.
- * @typedef {Object} KokoaModel
- * @property {Array.&lt;Array.&lt;string|number>>} wordFrequencies How many times words appear.
- * @property {Array.&lt;Array.&lt;string|number>>} wordScores Words cohension n-gram value.
- */
-
-/**
  * Class representing KokoaNLP.
  */
 class Kokoa {
   /**
-   * Create KokoaNLP instance.
+   * Creates KokoaNLP instance.
+   * @param {Array.&lt;Array.&lt;string|number>>} [wordFrequencies] How many times words appear.
+   * @param {Array.&lt;Array.&lt;string|number>>} [wordScores] Words cohension n-gram value.
    */
-  constructor() {
-    this.wordFrequencies = new Map();
-    this.wordScores = new Map();
+  constructor(lFrequencies, rFrequencies, lScores, rScores) {
+    this.lFrequencies = new Map(lFrequencies);
+    this.rFrequencies = new Map(rFrequencies);
+    this.lScores = new Map(lScores);
+    this.rScores = new Map(rScores);
   }
 
   /**
-   * Load KokoaNLP instance from the given model.
-   * @param {KokoaModel} model KokoaNLP model
+   * Loads KokoaNLP instance from the given model.
+   * @param {string} file KokoaNLP model file path.
+   * @returns {Kokoa} KokoaNLP instance.
    */
-  static load({ wordFrequencies, wordScores }) {
-    const kokoa = new Kokoa();
-    kokoa.wordFrequencies = new Map(wordFrequencies);
-    kokoa.wordScores = new Map(wordScores);
-    return kokoa;
+  static loadFile(file) {
+    if (fs.exists(file)) {
+      const content = fs.readFileSync(file).split('\n').map(value => value.split(','));
+      const lFrequencies = content.map(value => [value[0], Number(value[1])]);
+      const rFrequencies = content.map(value => [value[0], Number(value[2])]);
+      const lScores = content.map(value => [value[0], Number(value[3])]);
+      const rScores = content.map(value => [value[0], Number(value[4])]);
+      return new Kokoa(lFrequencies, rFrequencies, lScores, rScores);
+    }
+    return null;
   }
 
   /**
-   * Analyze the given document.
+   * Document analyzer options
+   * @typedef {Object} KokoaOptions
+   * @property {boolean} [hangulOnly=true] If true, only returns hangul contents.
+   * @property {number} [minCount=5] Ignores all words with total frequency lower than this.
+   */
+
+  /**
+   * Analyzes the given document.
    * @param {string} document The document to be analyzed.
-   * @param {Object} [options]
-   * @param {boolean} [options.hangulOnly=true] If true, Only returns hangul contents.
-   * @param {number} [options.threshold=5] Ignores all words with total frequency lower than this.
+   * @param {KokoaOptions} [options] Document analyzer options
    * @returns {Array.&lt;string>} Words of the document.
    */
-  run(document, { hangulOnly = true, threshold = 5 } = {}) {
-    const { wordFrequencies, wordScores } = this;
+  run(document, { hangulOnly = true, minCount = 5 } = {}) {
+    const { lFrequencies, lScores, rScores } = this;
     const chunks = extractChunks(document);
     const words = [];
     chunks.forEach((chunk) => {
-      if (Hangul.isHangulAll(chunk)) {
+      if (Hanguler.isHangul(chunk)) {
         const subtexts = extractSubtexts(chunk);
+        console.log(subtexts);
         const word = subtexts
-          .map(subtext => [subtext, wordScores.has(subtext) ? wordScores.get(subtext) : 0])
+          .map(([subtext, complement]) => [
+            subtext,
+            (lScores.has(subtext) ? lScores.get(subtext) : 0.01)
+            * (rScores.has(complement) ? rScores.get(complement) : 0.01),
+          ])
           .reduce((r, a) => (a[1] > r[1] ? a : r))[0];
-        if (wordFrequencies.get(word) >= threshold) {
+        if (lFrequencies.get(word) >= minCount) {
           words.push(word);
         }
       } else if (!hangulOnly) {
@@ -153,47 +175,62 @@ class Kokoa {
   }
 
   /**
-   * Save KokoaNLP instance as a model.
-   * @returns {KokoaModel} KokoaNLP model
+   * Saves KokoaNLP instance as a file.
+   * @param {string} file KokoaNLP model file path.
    */
-  save() {
-    const { wordFrequencies, wordScores } = this;
-    return {
-      wordFrequencies: Array.from(wordFrequencies.entries()),
-      wordScores: Array.from(wordScores.entries()),
-    };
-  }
+  // saveFile(file) {
+  //   const { lFrequencies, lScores, rFrequencies, rScores } = this;
+  //   const content = lFrequencies.entries()
+  //     .map(([l, lFrequency]) => [l, lFrequency, lScores.get(l)].join(','))
+  //     .join('\n');
+  //   fs.writeFileSync(file, content);
+  // }
 
   /**
-   * Train the given document.
+   * Trains the given document.
    * @param {string} document The document to be trained.
    */
   train(document) {
-    const { wordFrequencies } = this;
-    const chunks = extractChunks(document).filter(Hangul.isHangul).map(extractSubtexts);
+    const { lFrequencies, rFrequencies } = this;
+    const chunks = extractChunks(document).filter(Hanguler.isHangul).map(extractSubtexts);
     // Extract all words and count how many words appear.
     for (let i = 0, len = chunks.length; i &lt; len; i += 1) {
       const subtexts = chunks[i];
       for (let j = 0, len2 = subtexts.length; j &lt; len2; j += 1) {
         const subtext = subtexts[j];
-        if (wordFrequencies.has(subtext)) {
-          wordFrequencies.set(subtext, wordFrequencies.get(subtext) + 1);
+        if (lFrequencies.has(subtext)) {
+          lFrequencies.set(subtext, lFrequencies.get(subtext) + 1);
         } else {
-          wordFrequencies.set(subtext, 1);
+          lFrequencies.set(subtext, 1);
+        }
+        if (rFrequencies.has(subtext)) {
+          rFrequencies.set(subtext, rFrequencies.get(subtext) + 1);
+        } else {
+          rFrequencies.set(subtext, 1);
         }
       }
     }
   }
 
-  /** Update calculated cohension n-gram value for each word. */
+  /** Updates calculated cohension n-gram value for each word. */
   update() {
-    const { wordFrequencies, wordScores } = this;
-    wordFrequencies.forEach((frequency, subtext) => {
+    const {
+      lFrequencies, lScores, rFrequencies, rScores,
+    } = this;
+    lFrequencies.forEach((frequency, subtext, frequencies) => {
       if (subtext.length === 1) {
-        wordScores.set(subtext, 0.1);
+        lScores.set(subtext, 0.1);
       } else {
-        const exp = 1 / Hangul.disassemble(subtext).length;
-        wordScores.set(subtext, (frequency / wordFrequencies.get(subtext[0])) ** exp);
+        const exp = 1 / Hanguler.flatDisassemble(subtext).length;
+        lScores.set(subtext, (frequency / frequencies.get(subtext[0])) ** exp);
+      }
+    });
+    rFrequencies.forEach((frequency, subtext, frequencies) => {
+      if (subtext.length === 1) {
+        rScores.set(subtext, 0.1);
+      } else {
+        const exp = 1 / Hanguler.flatDisassemble(subtext).length;
+        rScores.set(subtext, (frequency / frequencies.get(subtext[0])) ** exp);
       }
     });
   }
@@ -210,13 +247,13 @@ module.exports = Kokoa;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Kokoa.html">Kokoa</a></li></ul><h3><a href="global.html">Global</a></h3>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Kokoa.html">Kokoa</a></li><li><a href="KokoaUtil.html">KokoaUtil</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri May 18 2018 01:10:12 GMT+0900 (KST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Jun 06 2018 23:37:02 GMT+0900 (KST)
 </footer>
 
 <script> prettyPrint(); </script>
