@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2><span class="attribs"><span class="type-signature"></span></span>Kokoa<span class="signature">(wordFrequencies<span class="signature-attributes">opt</span>, wordScores<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        <h2><span class="attribs"><span class="type-signature"></span></span>Kokoa<span class="signature">(originalFrequencies, reversedFrequencies, originalScores, reversedScores)</span><span class="type-signature"></span></h2>
         
             <div class="class-description">Class representing KokoaNLP.</div>
         
@@ -45,7 +45,7 @@
     
 
     
-    <h4 class="name" id="Kokoa"><span class="type-signature"></span>new Kokoa<span class="signature">(wordFrequencies<span class="signature-attributes">opt</span>, wordScores<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Kokoa"><span class="type-signature"></span>new Kokoa<span class="signature">(originalFrequencies, reversedFrequencies, originalScores, reversedScores)</span><span class="type-signature"></span></h4>
     
 
     
@@ -77,8 +77,6 @@
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
         
 
@@ -91,7 +89,7 @@
 
         <tr>
             
-                <td class="name"><code>wordFrequencies</code></td>
+                <td class="name"><code>originalFrequencies</code></td>
             
 
             <td class="type">
@@ -103,16 +101,6 @@
             
             </td>
 
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
             
 
             
@@ -124,7 +112,7 @@
 
         <tr>
             
-                <td class="name"><code>wordScores</code></td>
+                <td class="name"><code>reversedFrequencies</code></td>
             
 
             <td class="type">
@@ -137,20 +125,56 @@
             </td>
 
             
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
 
-                
+            
 
+            <td class="description last">How many times reversed words appear.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>originalScores</code></td>
+            
+
+            <td class="type">
+            
                 
-                </td>
+<span class="param-type">Array.&lt;Array.&lt;(string|number)>></span>
+
+
+            
+            </td>
+
             
 
             
 
             <td class="description last">Words cohension n-gram value.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>reversedScores</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Array.&lt;(string|number)>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Reversed words cohension n-gram value.</td>
         </tr>
 
     
@@ -191,7 +215,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Kokoa.js.html">Kokoa.js</a>, <a href="Kokoa.js.html#line81">line 81</a>
+        <a href="Kokoa.js.html">Kokoa.js</a>, <a href="Kokoa.js.html#line70">line 70</a>
     </li></ul></dd>
     
 
@@ -346,7 +370,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Kokoa.js.html">Kokoa.js</a>, <a href="Kokoa.js.html#line99">line 99</a>
+        <a href="Kokoa.js.html">Kokoa.js</a>, <a href="Kokoa.js.html#line91">line 91</a>
     </li></ul></dd>
     
 
@@ -385,6 +409,163 @@
     <dd>
         
 <span class="param-type"><a href="Kokoa.html">Kokoa</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="getFrequency"><span class="type-signature"></span>getFrequency<span class="signature">(word)</span><span class="type-signature"> &rarr; {number}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Returns ohw many times given word appears.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>word</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The word to be counted.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="Kokoa.js.html">Kokoa.js</a>, <a href="Kokoa.js.html#line108">line 108</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    How many times given word appears.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">number</span>
 
 
     </dd>
@@ -546,7 +727,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Kokoa.js.html">Kokoa.js</a>, <a href="Kokoa.js.html#line124">line 124</a>
+        <a href="Kokoa.js.html">Kokoa.js</a>, <a href="Kokoa.js.html#line126">line 126</a>
     </li></ul></dd>
     
 
@@ -703,7 +884,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Kokoa.js.html">Kokoa.js</a>, <a href="Kokoa.js.html#line165">line 165</a>
+        <a href="Kokoa.js.html">Kokoa.js</a>, <a href="Kokoa.js.html#line172">line 172</a>
     </li></ul></dd>
     
 
@@ -789,7 +970,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="Kokoa.js.html">Kokoa.js</a>, <a href="Kokoa.js.html#line188">line 188</a>
+        <a href="Kokoa.js.html">Kokoa.js</a>, <a href="Kokoa.js.html#line195">line 195</a>
     </li></ul></dd>
     
 
@@ -839,7 +1020,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Jun 06 2018 23:37:02 GMT+0900 (KST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Jun 10 2018 01:02:33 GMT+0900 (KST)
 </footer>
 
 <script> prettyPrint(); </script>

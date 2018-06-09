@@ -1,6 +1,6 @@
 # KokoaNLP
 
-> Supervised Learning Korean Kernel Object Analyzer
+> Unsupervised Learning Korean Kernel Object Analyzer
 
 [![npm](https://img.shields.io/npm/v/kokoanlp.svg?style=flat-square)](https://www.npmjs.com/package/kokoanlp) [![npm](https://img.shields.io/npm/dt/kokoanlp.svg?style=flat-square)](https://www.npmjs.com/package/kokoanlp)
 
@@ -38,10 +38,10 @@ See [API](http://astro36.github.io/Kokoa/index.html)
 Extract words from the given document:
 
 ```javascript
-const Kokoa = require('kokoanlp');
-const kokoa = Kokoa.load(yourModel);
-const words = kokoa.run('태평양 전쟁 개전 당시 일본 해군의 전략은 외곽 방어망 곳곳에 배치된 지상비행장이 방어의 근거지가 되고 유사시 적을 방어선 가까이 끌어들이는 동안 항공기를 집결하여 격퇴하는 것이었다.');
-console.log(words);
+const { KokoaUtil } = require('kokoanlp');
+const util = new KokoaUtil(kokoa);
+const words = util.words('태평양 전쟁 개전 당시 일본 해군의 전략은 외곽 방어망 곳곳에 배치된 지상비행장이 방어의 근거지가 되고 유사시 적을 방어선 가까이 끌어들이는 동안 항공기를 집결하여 격퇴하는 것이었다.');
+console.log(words); // ['태평양', '전쟁', '개전', '당시', '일본', '해군', '전략', '외곽', '방어', '곳곳에', '배치', '방어', '되고', '방어', '가까이', '동안', '항공', '것이']
 ```
 
 ## License
