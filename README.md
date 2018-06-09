@@ -12,6 +12,7 @@ See [CHANGELOG](./CHANGELOG.md)
 
 - Train your own model.
 - Extract words from the document.
+- Find keywords and keysentences from the document.
 
 ## Installation
 
