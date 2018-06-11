@@ -60,5 +60,6 @@ typings/
 # Parcel
 .cache/
 
-# News articles
+# Temp files
 news/
+words.csv

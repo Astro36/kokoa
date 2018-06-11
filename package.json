@@ -11,6 +11,7 @@
     "part-of-speech-tagger"
   ],
   "directories": {
+    "bin": "bin",
     "lib": "lib",
     "test": "test"
   },
@@ -31,7 +32,8 @@
     "docs:demo": "parcel build demo -d docs",
     "lint": "eslint lib test",
     "lint:fix": "eslint lib test --fix",
-    "test": "node test"
+    "test": "node test",
+    "train": "node bin/train.js"
   },
   "repository": {
     "type": "git",

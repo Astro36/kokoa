@@ -98,16 +98,16 @@ const extractSubtexts = (chunk) => {
 class Kokoa {
   /**
    * Creates KokoaNLP instance.
-   * @param {Array.&lt;Array.&lt;string|number>>} originalFrequencies How many times words appear.
-   * @param {Array.&lt;Array.&lt;string|number>>} reversedFrequencies
+   * @param {Array.&lt;Array.&lt;string|number>>} [originalFrequencies] How many times words appear.
+   * @param {Array.&lt;Array.&lt;string|number>>} [originalScores] Words cohension n-gram value.
+   * @param {Array.&lt;Array.&lt;string|number>>} [reversedFrequencies]
    *  How many times reversed words appear.
-   * @param {Array.&lt;Array.&lt;string|number>>} originalScores Words cohension n-gram value.
-   * @param {Array.&lt;Array.&lt;string|number>>} reversedScores Reversed words cohension n-gram value.
+   * @param {Array.&lt;Array.&lt;string|number>>} [reversedScores] Reversed words cohension n-gram value.
    */
-  constructor(originalFrequencies, reversedFrequencies, originalScores, reversedScores) {
+  constructor(originalFrequencies, originalScores, reversedFrequencies, reversedScores) {
     this.originalFrequencies = new Map(originalFrequencies);
-    this.reversedFrequencies = new Map(reversedFrequencies);
     this.originalScores = new Map(originalScores);
+    this.reversedFrequencies = new Map(reversedFrequencies);
     this.reversedScores = new Map(reversedScores);
   }
 
@@ -117,12 +117,21 @@ class Kokoa {
    * @returns {Kokoa} KokoaNLP instance.
    */
   static loadFile(file) {
-    if (fs.exists(file)) {
-      const content = fs.readFileSync(file).split('\n').map(value => value.split(','));
-      const originalFrequencies = content.map(value => [value[0], Number(value[1])]);
-      const reversedFrequencies = content.map(value => [value[0], Number(value[2])]);
-      const originalScores = content.map(value => [value[0], Number(value[3])]);
-      const reversedScores = content.map(value => [value[0], Number(value[4])]);
+    if (fs.existsSync(file)) {
+      const originalFrequencies = [];
+      const originalScores = [];
+      const reversedFrequencies = [];
+      const reversedScores = [];
+      fs.readFileSync(file).toString().split('\n').forEach((value) => {
+        const [type, text, frequency, score] = value.split(',');
+        if (type === 'O') {
+          originalFrequencies.push([text, Number(frequency)]);
+          originalScores.push([text, Number(score)]);
+        } else {
+          reversedFrequencies.push([text, Number(frequency)]);
+          reversedScores.push([text, Number(score)]);
+        }
+      });
       return new Kokoa(originalFrequencies, reversedFrequencies, originalScores, reversedScores);
     }
     return null;
@@ -185,13 +194,19 @@ class Kokoa {
    * Saves KokoaNLP instance as a file.
    * @param {string} file KokoaNLP model file path.
    */
-  // saveFile(file) {
-  //   const { lFrequencies, lScores, rFrequencies, rScores } = this;
-  //   const content = lFrequencies.entries()
-  //     .map(([l, lFrequency]) => [l, lFrequency, lScores.get(l)].join(','))
-  //     .join('\n');
-  //   fs.writeFileSync(file, content);
-  // }
+  saveFile(file) {
+    const {
+      originalFrequencies, originalScores, reversedFrequencies, reversedScores,
+    } = this;
+    const content = [];
+    originalFrequencies.forEach((frequency, text) => {
+      content.push(['O', text, frequency, originalScores.get(text)].join(','));
+    });
+    reversedFrequencies.forEach((frequency, text) => {
+      content.push(['R', text, frequency, reversedScores.get(text)].join(','));
+    });
+    fs.writeFileSync(file, content.join('\n'));
+  }
 
   /**
    * Trains the given document.
@@ -203,17 +218,19 @@ class Kokoa {
     // Extract all words and count how many words appear.
     for (let i = 0, len = chunks.length; i &lt; len; i += 1) {
       const subtexts = chunks[i];
-      for (let j = 0, len2 = subtexts.length; j &lt; len2; j += 1) {
-        const [originalSubtext, reversedSubtext] = subtexts[j];
-        if (originalFrequencies.has(originalSubtext)) {
-          originalFrequencies.set(originalSubtext, originalFrequencies.get(originalSubtext) + 1);
-        } else {
-          originalFrequencies.set(originalSubtext, 1);
-        }
-        if (reversedFrequencies.has(reversedSubtext)) {
-          reversedFrequencies.set(reversedSubtext, reversedFrequencies.get(reversedSubtext) + 1);
-        } else {
-          reversedFrequencies.set(reversedSubtext, 1);
+      if (subtexts.length > 2) { // Ignore one letter words.
+        for (let j = 0, len2 = subtexts.length; j &lt; len2; j += 1) {
+          const [originalSubtext, reversedSubtext] = subtexts[j];
+          if (originalFrequencies.has(originalSubtext)) {
+            originalFrequencies.set(originalSubtext, originalFrequencies.get(originalSubtext) + 1);
+          } else {
+            originalFrequencies.set(originalSubtext, 1);
+          }
+          if (reversedFrequencies.has(reversedSubtext)) {
+            reversedFrequencies.set(reversedSubtext, reversedFrequencies.get(reversedSubtext) + 1);
+          } else {
+            reversedFrequencies.set(reversedSubtext, 1);
+          }
         }
       }
     }
@@ -264,7 +281,7 @@ module.exports = Kokoa;
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Jun 10 2018 01:08:01 GMT+0900 (KST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Jun 12 2018 00:17:56 GMT+0900 (Korean Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
