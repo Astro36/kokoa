@@ -8,6 +8,10 @@
 
 See [CHANGELOG](./CHANGELOG.md)
 
+## Demo
+
+See [Demo](http://astro36.github.io/Kokoa/demo.html)
+
 ## Features
 
 - Train your own model.

@@ -7,8 +7,7 @@
     "korean",
     "alphabet",
     "hangul",
-    "analyzer",
-    "part-of-speech-tagger"
+    "analyzer"
   ],
   "directories": {
     "bin": "bin",
@@ -29,7 +28,7 @@
   "scripts": {
     "docs": "npm run docs:api & npm run docs:demo",
     "docs:api": "jsdoc lib -d docs",
-    "docs:demo": "parcel build demo -d docs",
+    "docs:demo": "parcel build demo/index.html -d docs --out-file demo.html",
     "lint": "eslint lib test",
     "lint:fix": "eslint lib test --fix",
     "test": "node test",
