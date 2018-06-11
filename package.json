@@ -39,7 +39,7 @@
     "type": "git",
     "url": "git+https://github.com/Astro36/Kokoa.git"
   },
-  "author": "Astro36 <astr36@naver.com>",
+  "author": "Seungjae Park <astr36@naver.com>",
   "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/Astro36/Kokoa/issues"
