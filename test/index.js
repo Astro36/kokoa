@@ -14,9 +14,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-const { Kokoa, KokoaUtil } = require('../lib');
+const { KokoaModel, KokoaUtil } = require('../lib');
 
-const kokoa = Kokoa.loadFile('./data/words.csv');
+const kokoa = KokoaModel.loadFile('./data/words.csv');
 const util = new KokoaUtil(kokoa);
 
 console.log(util.words('태평양 전쟁 개전 당시 일본 해군의 전략은 외곽 방어망 곳곳에 배치된 지상비행장이 방어의 근거지가 되고 유사시 적을 방어선 가까이 끌어들이는 동안 항공기를 집결하여 격퇴하는 것이었다.'));

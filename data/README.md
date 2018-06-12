@@ -24,9 +24,9 @@ python news_crawler.py --type 조선일보 --start-id 0003369060
 
 Unzip `words.7z` as CSV file.
 
-You can use the prebuilt model with [Kokoa.loadFile(file)](https://astro36.github.io/Kokoa/Kokoa.html#.loadFile) function:
+You can use the prebuilt model with [KokoaModel.loadFile(file)](https://astro36.github.io/Kokoa/api/KokoaModel.html#.loadFile) function:
 
 ```javascript
-const Kokoa = require('kokoanlp');
-const kokoa = Kokoa.load('./data/words.csv');
+const { KokoaModel } = require('kokoanlp');
+const kokoa = KokoaModel.loadFile('./data/words.csv');
 ```
