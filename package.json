@@ -26,9 +26,8 @@
     "parcel": "^1.8.1"
   },
   "scripts": {
-    "docs": "npm run docs:api & npm run docs:demo",
-    "docs:api": "jsdoc lib -d docs",
-    "docs:demo": "parcel build demo/index.html -d docs --out-file demo.html",
+    "docs:api": "jsdoc lib -d temp/api & parcel build temp/api -d docs --public-url ../ --no-source-maps",
+    "docs:demo": "parcel build demo/index.html -d docs --out-file demo.html --no-source-maps",
     "lint": "eslint lib test",
     "lint:fix": "eslint lib test --fix",
     "test": "node test",

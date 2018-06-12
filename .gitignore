@@ -62,4 +62,5 @@ typings/
 
 # Temp files
 news/
+temp/
 words.csv
