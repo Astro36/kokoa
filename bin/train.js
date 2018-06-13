@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 const fs = require('fs');
 const path = require('path');
 
-const { Kokoa, KokoaModel } = require('../lib');
+const Kokoa = require('../lib');
 
 const dir = path.join(__dirname, '../data/news');
 const kokoa = new Kokoa();
@@ -31,5 +31,5 @@ if (fs.existsSync(dir)) {
     }
   });
   kokoa.update();
-  KokoaModel.saveFile(kokoa, path.join(__dirname, '../data/words.csv'));
+  kokoa.getModel().saveFile(path.join(__dirname, '../data/words.csv'));
 }

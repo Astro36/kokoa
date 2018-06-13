@@ -28,5 +28,5 @@ You can use the prebuilt model with [KokoaModel.loadFile(file)](https://astro36.
 
 ```javascript
 const { KokoaModel } = require('kokoanlp');
-const kokoa = KokoaModel.loadFile('./data/words.csv');
+const model = KokoaModel.loadFile('./data/words.csv');
 ```
