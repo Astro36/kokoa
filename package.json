@@ -27,7 +27,7 @@
   },
   "scripts": {
     "docs:api": "jsdoc lib -d temp/api & parcel build temp/api -d docs --public-url ../ --no-source-maps",
-    "docs:demo": "parcel build demo/index.html -d docs --out-file demo.html --no-source-maps",
+    "docs:demo": "parcel build demo/index.html -d docs --out-file demo.html --public-url ./ --no-source-maps",
     "lint": "eslint lib test",
     "lint:fix": "eslint lib test --fix",
     "test": "node test",
