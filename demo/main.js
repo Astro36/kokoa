@@ -16,33 +16,74 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 const { Kokoa, KokoaUtil } = require('../lib');
 
-const kokoa = new Kokoa();
-const util = new KokoaUtil(kokoa);
-
-console.log(util.words('태평양 전쟁 개전 당시 일본 해군의 전략은 외곽 방어망 곳곳에 배치된 지상비행장이 방어의 근거지가 되고 유사시 적을 방어선 가까이 끌어들이는 동안 항공기를 집결하여 격퇴하는 것이었다.'));
-
+const elementProgress = document.getElementById('load-progress');
 const elementRun = document.getElementById('run');
 const elementContent = document.getElementById('content');
 const elementKeywords = document.getElementById('keywords');
 const elementKeysentences = document.getElementById('keysentences');
 const elementWords = document.getElementById('words');
 
-elementRun.addEventListener('click', () => {
-  const content = elementContent.value;
-  const keywords = util.keywords(content);
-  const keysentences = util.keysentences(content);
-  const words = util.words(content);
-  elementKeywords.innerHTML = '';
-  keywords.forEach((keyword) => {
-    const list = document.createElement('li');
-    list.innerHTML = keyword;
-    elementKeywords.appendChild(list);
-  });
-  elementKeysentences.innerHTML = '';
-  keysentences.forEach((keysentence) => {
-    const list = document.createElement('li');
-    list.innerHTML = keysentence;
-    elementKeysentences.appendChild(list);
-  });
-  elementWords.textContent = words.join('/');
-});
+const request = new XMLHttpRequest();
+request.open('GET', './words.csv', true);
+request.onerror = () => {
+  elementProgress.textContent = 'Load Error';
+};
+request.onprogress = (event) => {
+  elementProgress.textContent = `Loading: ${((event.loaded / event.total) * 100).toFixed(2)}%`;
+};
+request.onreadystatechange = () => {
+  if (request.readyState === 4) {
+    if (request.status === 200) {
+      // Load prebuilt data.
+      const originalFrequencies = [];
+      const originalScores = [];
+      const reversedFrequencies = [];
+      const reversedScores = [];
+      let isOriginal = true;
+      request.responseText.split('\n').forEach((value) => {
+        if (value === '---') {
+          isOriginal = false;
+        } else {
+          const [text, frequency, score] = value.split(',');
+          if (isOriginal) {
+            originalFrequencies.push([text, Number(frequency)]);
+            originalScores.push([text, Number(score)]);
+          } else {
+            reversedFrequencies.push([text, Number(frequency)]);
+            reversedScores.push([text, Number(score)]);
+          }
+        }
+      });
+
+      // Init KokoaNLP.
+      const model = {
+        originalFrequencies,
+        originalScores,
+        reversedFrequencies,
+        reversedScores,
+      };
+      const kokoa = new Kokoa(model);
+      const util = new KokoaUtil(kokoa);
+      elementRun.addEventListener('click', () => {
+        const content = elementContent.value;
+        const keywords = util.keywords(content);
+        const keysentences = util.keysentences(content);
+        const words = util.words(content);
+        elementKeywords.innerHTML = '';
+        keywords.forEach((keyword) => {
+          const list = document.createElement('li');
+          list.innerHTML = keyword;
+          elementKeywords.appendChild(list);
+        });
+        elementKeysentences.innerHTML = '';
+        keysentences.forEach((keysentence) => {
+          const list = document.createElement('li');
+          list.innerHTML = keysentence;
+          elementKeysentences.appendChild(list);
+        });
+        elementWords.textContent = words.join('/');
+      });
+    }
+  }
+};
+request.send(null);

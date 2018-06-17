@@ -64,3 +64,4 @@ typings/
 news/
 temp/
 words.csv
+!docs/words.csv
