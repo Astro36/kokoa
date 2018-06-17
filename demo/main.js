@@ -54,7 +54,6 @@ request.onreadystatechange = () => {
           }
         }
       });
-
       // Init KokoaNLP.
       const model = {
         originalFrequencies,
