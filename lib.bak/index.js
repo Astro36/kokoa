@@ -15,15 +15,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
 const Kokoa = require('./Kokoa');
-const Engine = require('./core/Engine');
-const SpacingEngine = require('./core/SpacingEngine');
-const WordsEngine = require('./core/WordsEngine');
+const KokoaModel = require('./KokoaModel');
+const KokoaUtil = require('./KokoaUtil');
 
 module.exports = Object.assign(Kokoa, {
   Kokoa,
-  model: {
-    Engine,
-    SpacingEngine,
-    WordsEngine,
-  },
+  KokoaModel,
+  KokoaUtil,
 });
