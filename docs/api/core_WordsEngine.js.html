@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en"> <head> <meta charset="utf-8"> <title>JSDoc: Source: core/WordsEngine.js</title> <script src="../prettify.ed0c630f.js"> </script> <script src="../lang-css.9fdb3da7.js"> </script> <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]--> <link type="text/css" rel="stylesheet" href="../prettify-tomorrow.01e2caea.css"> <link type="text/css" rel="stylesheet" href="../jsdoc-default.c9519cdb.css"> </head> <body> <div id="main"> <h1 class="page-title">Source: core/WordsEngine.js</h1> <section> <article> <pre class="prettyprint source linenums"><code>/* KokoaNLP
+    <![endif]--> <link type="text/css" rel="stylesheet" href="../prettify-tomorrow.01e2caea.css"> <link type="text/css" rel="stylesheet" href="../jsdoc-default.cf9572fd.css"> </head> <body> <div id="main"> <h1 class="page-title">Source: core/WordsEngine.js</h1> <section> <article> <pre class="prettyprint source linenums"><code>/* KokoaNLP
 Copyright (C) 2018  Seungjae Park
 
 This program is free software: you can redistribute it and/or modify
@@ -34,9 +34,8 @@ const extractSubtexts = (chunk) => {
     return subtextRecipes.get(chunk);
   }
   const subtexts = [];
-  const chars = chunk;
-  for (let i = 0, len = chars.length; i &lt;= len; i += 1) {
-    subtexts.push([chars.slice(0, i), chars.slice(i).split('').reverse().join('')]);
+  for (let i = 1, len = chunk.length; i &lt;= len; i += 1) {
+    subtexts.push(chunk.slice(0, i));
   }
   subtextRecipes.set(chunk, subtexts);
   return subtexts;
@@ -44,60 +43,41 @@ const extractSubtexts = (chunk) => {
 
 /**
  * Class representing a word extracting engine.
+ * @extends Engine
  */
 class WordsEngine extends Engine {
   /**
    * Creates words engine instance.
    * @param {Object} [model] Words engine model.
-   * @param {Array.&lt;Array.&lt;string|number>>} [model.originalFrequencies]
+   * @param {Array.&lt;Array.&lt;string|number>>} [model.frequencies]
    *  How many times words appear.
-   * @param {Array.&lt;Array.&lt;string|number>>} [model.originalScores] Words cohension n-gram value.
-   * @param {Array.&lt;Array.&lt;string|number>>} [model.reversedFrequencies]
-   *  How many times reversed words appear.
-   * @param {Array.&lt;Array.&lt;string|number>>} [model.reversedScores]
-   *  Reversed words cohension n-gram value.
+   * @param {Array.&lt;Array.&lt;string|number>>} [model.scores] Words cohension n-gram value.
    */
   constructor({
-    originalFrequencies, originalScores, reversedFrequencies, reversedScores,
+    frequencies, scores,
   } = {}) {
     super();
-    this.originalFrequencies = new Map(originalFrequencies);
-    this.originalScores = new Map(originalScores);
-    this.reversedFrequencies = new Map(reversedFrequencies);
-    this.reversedScores = new Map(reversedScores);
+    this.frequencies = new Map(frequencies);
+    this.scores = new Map(scores);
   }
 
   /**
-   * Loads words engine instance from the given model.
+   * Loads words engine instance from the given file.
    * @param {string} file Words engine model file path.
    * @returns {WordsEngine} Words engine instance.
    */
   static load(file) {
     if (fs.existsSync(file)) {
-      const originalFrequencies = [];
-      const originalScores = [];
-      const reversedFrequencies = [];
-      const reversedScores = [];
-      let isOriginal = true;
+      const frequencies = [];
+      const scores = [];
       fs.readFileSync(file).toString().split('\n').forEach((value) => {
-        if (value === '---') {
-          isOriginal = false;
-        } else {
-          const [text, frequency, score] = value.split(',');
-          if (isOriginal) {
-            originalFrequencies.push([text, Number(frequency)]);
-            originalScores.push([text, Number(score)]);
-          } else {
-            reversedFrequencies.push([text, Number(frequency)]);
-            reversedScores.push([text, Number(score)]);
-          }
-        }
+        const [text, frequency, score] = value.split(',');
+        frequencies.push([text, Number(frequency)]);
+        scores.push([text, Number(score)]);
       });
       return new WordsEngine({
-        originalFrequencies,
-        originalScores,
-        reversedFrequencies,
-        reversedScores,
+        frequencies,
+        scores,
       });
     }
     return null;
@@ -109,52 +89,45 @@ class WordsEngine extends Engine {
    * @return {number} How many times given word appears.
    */
   getFrequency(word) {
-    const { originalFrequencies } = this;
-    return originalFrequencies.has(word) ? originalFrequencies.get(word) : 0;
+    const { frequencies } = this;
+    return frequencies.has(word) ? frequencies.get(word) : 0;
   }
 
   /**
    * Extracts a word from the given chunk.
    * @param {string} chunk The chunk to be analyzed. (must be hangul)
-   * @returns {?string} A word from the given chunk.
+   * @returns {string} A word from the given chunk.
    */
   run(chunk) {
-    const { originalScores, reversedScores } = this;
-    const subtexts = extractSubtexts(chunk);
-    const scores = subtexts.map(([originalSubtext, reversedSubtext]) => [
-      originalSubtext,
-      reversedSubtext,
-      (originalScores.has(originalSubtext) ? originalScores.get(originalSubtext) : 0.01),
-      (reversedScores.has(reversedSubtext) ? reversedScores.get(reversedSubtext) : 0.01),
-    ]);
-    for (let i = 0; i &lt; 3; i += 1) {
-      let candidates;
-      if (i === 0) {
-        candidates = scores.filter(([, , originalScore, reversedScore], index, array) => {
-          const nextOriginalScore = index === array.length - 1 ? 0 : array[index + 1][2];
-          const previousReversedScore = index === 0 ? 0 : array[index - 1][3];
-          return originalScore >= nextOriginalScore &amp;&amp; reversedScore >= previousReversedScore;
-        });
-      } else if (i === 2) {
-        candidates = scores.filter(([, , originalScore], index, array) => {
-          const nextOriginalScore = index === array.length - 1 ? 0 : array[index + 1][2];
-          return originalScore >= nextOriginalScore;
-        });
-      } else if (i === 1) {
-        candidates = scores.filter(([, , , reversedScore], index, array) => {
-          const previousReversedScore = index === 0 ? 0 : array[index - 1][3];
-          return reversedScore >= previousReversedScore;
-        });
-      }
-      if (candidates.length > 0) {
-        const word = candidates.map(([originalSubtext, , originalScore]) => [
-          originalSubtext,
-          originalScore + (originalSubtext.length / 10000), // Prevents returning empty string.
-        ]).reduce((r, a) => (a[1] > r[1] ? a : r))[0];
-        return word;
-      }
+    const { scores } = this;
+    if (chunk.length === 1) {
+      return chunk;
     }
-    return null;
+    const subtexts = extractSubtexts(chunk);
+    const scoreList = subtexts.map(subtext => [
+      subtext,
+      (scores.has(subtext) ? scores.get(subtext) : 0),
+    ]);
+    // scoreList length is always bigger than 1.
+    if (scoreList.length >= 2) {
+      const candidates = scoreList.filter(([, score], index, array) => {
+        const next = index === array.length - 1 ? 1 : array[index + 1][1];
+        return score >= next;
+      });
+      if (candidates.length === 0) {
+        return scoreList.map(([subtext, score]) => [
+          subtext,
+          score + (subtext.length / 10000), // Prevents returning empty string.
+        ]).reduce((r, a) => (a[1] > r[1] ? a : r))[0];
+      } if (candidates.length === 1) {
+        return candidates[0][0];
+      }
+      return candidates.map(([subtext, score]) => [
+        subtext,
+        score + (subtext.length / 10000), // Prevents returning empty string.
+      ]).reduce((r, a) => (a[1] > r[1] ? a : r))[0];
+    }
+    return chunk;
   }
 
   /**
@@ -163,15 +136,11 @@ class WordsEngine extends Engine {
    */
   save(file) {
     const {
-      originalFrequencies, originalScores, reversedFrequencies, reversedScores,
+      frequencies, scores,
     } = this;
     const content = [];
-    originalFrequencies.forEach((frequency, text) => {
-      content.push([text, frequency, originalScores.get(text)].join(','));
-    });
-    content.push('---');
-    reversedFrequencies.forEach((frequency, text) => {
-      content.push([text, frequency, reversedScores.get(text)].join(','));
+    frequencies.forEach((frequency, text) => {
+      content.push([text, frequency, scores.get(text)].join(','));
     });
     fs.writeFileSync(file, content.join('\n'));
   }
@@ -181,56 +150,36 @@ class WordsEngine extends Engine {
    * @param {Array.&lt;string>} chunks The chunks to be trained. (must be hangul)
    */
   train(chunks) {
-    const { originalFrequencies, reversedFrequencies } = this;
-    const chunkArr = chunks.map(extractSubtexts);
+    const { frequencies } = this;
     // Extract all words and count how many words appear.
-    for (let i = 0, len = chunkArr.length; i &lt; len; i += 1) {
-      const subtexts = chunkArr[i];
-      if (subtexts.length > 2) { // Ignore one letter words.
-        for (let j = 0, len2 = subtexts.length; j &lt; len2; j += 1) {
-          const [originalSubtext, reversedSubtext] = subtexts[j];
-          if (originalFrequencies.has(originalSubtext)) {
-            originalFrequencies.set(originalSubtext, originalFrequencies.get(originalSubtext) + 1);
+    chunks.map(extractSubtexts).forEach((subtexts) => {
+      if (subtexts.length >= 2) { // Ignore one letter words.
+        subtexts.forEach((subtext) => {
+          if (frequencies.has(subtext)) {
+            frequencies.set(subtext, frequencies.get(subtext) + 1);
           } else {
-            originalFrequencies.set(originalSubtext, 1);
+            frequencies.set(subtext, 1);
           }
-          if (reversedFrequencies.has(reversedSubtext)) {
-            reversedFrequencies.set(reversedSubtext, reversedFrequencies.get(reversedSubtext) + 1);
-          } else {
-            reversedFrequencies.set(reversedSubtext, 1);
-          }
-        }
+        });
       }
-    }
+    });
   }
 
   /** Updates calculated cohension n-gram value for each word. */
   update() {
     const {
-      originalFrequencies, originalScores, reversedFrequencies, reversedScores,
+      frequencies, scores,
     } = this;
-    originalFrequencies.forEach((frequency, subtext, frequencies) => {
-      if (subtext.length === 0) {
-        originalScores.set(subtext, 0);
-      } else if (subtext.length === 1) {
-        originalScores.set(subtext, 0);
+    frequencies.forEach((frequency, subtext, array) => {
+      if (subtext.length === 1) {
+        scores.set(subtext, 0);
       } else {
         const exp = 1 / subtext.length;
-        originalScores.set(subtext, (frequency / frequencies.get(subtext[0])) ** exp);
-      }
-    });
-    reversedFrequencies.forEach((frequency, subtext, frequencies) => {
-      if (subtext.length === 0) {
-        reversedScores.set(subtext, 0);
-      } else if (subtext.length === 1) {
-        reversedScores.set(subtext, 0);
-      } else {
-        const exp = 1 / subtext.length;
-        reversedScores.set(subtext, (frequency / frequencies.get(subtext[0])) ** exp);
+        scores.set(subtext, (frequency / array.get(subtext[0])) ** exp);
       }
     });
   }
 }
 
 module.exports = WordsEngine;
-</code></pre> </article> </section> </div> <nav> <h2><a href="../api/index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="../api/Kokoa.html">Kokoa</a></li><li><a href="../api/Model.html">Model</a></li><li><a href="../api/SpacingEngine.html">SpacingEngine</a></li><li><a href="../api/WordsEngine.html">WordsEngine</a></li></ul> </nav> <br class="clear"> <footer> Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Wed Jun 27 2018 01:03:38 GMT+0900 (Korean Standard Time) </footer> <script>prettyPrint();</script> <script src="../linenumber.1c80b311.js"> </script> </body> </html>
+</code></pre> </article> </section> </div> <nav> <h2><a href="../api\index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="../api\Engine.html">Engine</a></li><li><a href="../api\Kokoa.html">Kokoa</a></li><li><a href="../api\SpacingEngine.html">SpacingEngine</a></li><li><a href="../api\WordsEngine.html">WordsEngine</a></li></ul> </nav> <br class="clear"> <footer> Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Jul 07 2018 20:00:43 GMT+0900 (GMT+09:00) </footer> <script>prettyPrint();</script> <script src="../linenumber.1c80b311.js"> </script> </body> </html>

@@ -19,7 +19,7 @@ const path = require('path');
 
 const Kokoa = require('../lib');
 
-const dir = path.join(__dirname, '../data/news');
+const dir = path.join(__dirname, '../../news');
 const kokoa = new Kokoa();
 
 if (fs.existsSync(dir)) {
@@ -28,8 +28,9 @@ if (fs.existsSync(dir)) {
     if (title && content) {
       kokoa.train(title);
       kokoa.train(content);
+      console.log(title)
     }
   });
   kokoa.update();
-  kokoa.getModel().saveFile(path.join(__dirname, '../data/words.csv'));
+  kokoa.save(path.join(__dirname, '../data/kokoa.csv'));
 }
