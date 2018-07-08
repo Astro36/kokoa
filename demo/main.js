@@ -14,7 +14,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-const { Kokoa, KokoaUtil } = require('../lib');
+const { Kokoa, model: { SpacingEngine, WordsEngine } } = require('../lib');
 
 const elementProgress = document.getElementById('load-progress');
 const elementRun = document.getElementById('run');
@@ -24,7 +24,7 @@ const elementKeysentences = document.getElementById('keysentences');
 const elementWords = document.getElementById('words');
 
 const request = new XMLHttpRequest();
-request.open('GET', './words.csv', true);
+request.open('GET', './kokoa-data.csv', true);
 request.onerror = () => {
   elementProgress.textContent = 'Load Error';
 };
@@ -35,52 +35,56 @@ request.onreadystatechange = () => {
   if (request.readyState === 4) {
     if (request.status === 200) {
       // Load prebuilt data.
-      const originalFrequencies = [];
-      const originalScores = [];
-      const reversedFrequencies = [];
-      const reversedScores = [];
-      let isOriginal = true;
+      const spacingModel = {
+        trigramFrequencies: [],
+        spacingFrequencies: [],
+        scores: [],
+      };
+      const wordsModel = {
+        frequencies: [],
+        scores: [],
+      };
+      let isSpacingModel = true;
       request.responseText.split('\n').forEach((value) => {
         if (value === '---') {
-          isOriginal = false;
+          isSpacingModel = false;
         } else {
-          const [text, frequency, score] = value.split(',');
-          if (isOriginal) {
-            originalFrequencies.push([text, Number(frequency)]);
-            originalScores.push([text, Number(score)]);
+          if (isSpacingModel) {
+            const [text, trigramFrequency, spacingFrequency, score] = value.split(',');
+            spacingModel.trigramFrequencies.push([text, Number(trigramFrequency)]);
+            spacingModel.spacingFrequencies.push([text, Number(spacingFrequency)]);
+            spacingModel.scores.push([text, Number(score)]);
           } else {
-            reversedFrequencies.push([text, Number(frequency)]);
-            reversedScores.push([text, Number(score)]);
+            const [text, frequency, score] = value.split(',');
+            wordsModel.frequencies.push([text, Number(frequency)]);
+            wordsModel.scores.push([text, Number(score)]);
           }
         }
       });
       // Init KokoaNLP.
-      const model = {
-        originalFrequencies,
-        originalScores,
-        reversedFrequencies,
-        reversedScores,
-      };
-      const kokoa = new Kokoa(model);
-      const util = new KokoaUtil(kokoa);
+      const spacingEngine = new SpacingEngine(spacingModel);
+      const wordsEngine = new WordsEngine(wordsModel);
+      console.log(Kokoa)
+      const kokoa = new Kokoa({ spacingEngine, wordsEngine });
       elementRun.addEventListener('click', () => {
         const content = elementContent.value;
-        const keywords = util.keywords(content);
-        const keysentences = util.keysentences(content);
-        const words = util.words(content);
-        elementKeywords.innerHTML = '';
-        keywords.forEach((keyword) => {
-          const list = document.createElement('li');
-          list.innerHTML = keyword;
-          elementKeywords.appendChild(list);
-        });
-        elementKeysentences.innerHTML = '';
-        keysentences.forEach((keysentence) => {
-          const list = document.createElement('li');
-          list.innerHTML = keysentence;
-          elementKeysentences.appendChild(list);
-        });
-        elementWords.textContent = words.join('/');
+        // const keywords = kokoa.keywords(content);
+        // const keysentences = kokoa.keysentences(content);
+        const morphs = kokoa.morphs(content);
+        const words = kokoa.words(content);
+        // elementKeywords.innerHTML = '';
+        // keywords.forEach((keyword) => {
+        //   const list = document.createElement('li');
+        //   list.innerHTML = keyword;
+        //   elementKeywords.appendChild(list);
+        // });
+        // elementKeysentences.innerHTML = '';
+        // keysentences.forEach((keysentence) => {
+        //   const list = document.createElement('li');
+        //   list.innerHTML = keysentence;
+        //   elementKeysentences.appendChild(list);
+        // });
+        elementWords.textContent = words.join(',');
       });
     }
   }
