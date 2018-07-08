@@ -32,5 +32,5 @@ if (fs.existsSync(dir)) {
     }
   });
   kokoa.update();
-  kokoa.save(path.join(__dirname, '../data/kokoa.csv'));
+  kokoa.save(path.join(__dirname, '../data/kokoa.*.csv'));
 }
