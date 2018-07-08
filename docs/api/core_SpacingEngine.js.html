@@ -16,6 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see &lt;http://www.gnu.org/licenses/>. */
 
+const fs = require('fs');
+
 const Engine = require('./Engine');
 
 /**
@@ -23,101 +25,60 @@ const Engine = require('./Engine');
  * @extends Engine
  */
 class SpacingEngine extends Engine {
-/**
-   * Creates words engine instance.
-   * @param {Object} [model] Words engine model.
-   * @param {Array.&lt;Array.&lt;string|number>>} [model.frequencies]
-   *  How many times words appear.
-   * @param {Array.&lt;Array.&lt;string|number>>} [model.scores] Words cohension n-gram value.
+  /**
+   * Creates spacing engine instance.
+   * @param {Object} [model] Words spacing model.
+   * @param {Array.&lt;Array.&lt;string|number>>} [model.bigramFrequencies] How many times bigrams appear.
+   * @param {Array.&lt;Array.&lt;string|number>>} [model.spacingFrequencies] How many times spaces appear.
+   * @param {Array.&lt;Array.&lt;string|number>>} [model.scores] Bigram spacing probabiltiy.
    */
-  constructor({
-    frequencies, scores,
-  } = {}) {
+  constructor({ bigramFrequencies, spacingFrequencies, scores } = {}) {
     super();
-    this.frequencies = new Map(frequencies);
+    this.bigramFrequencies = new Map(bigramFrequencies);
+    this.spacingFrequencies = new Map(spacingFrequencies);
     this.scores = new Map(scores);
   }
 
   /**
-   * Loads words engine instance from the given file.
-   * @param {string} file Words engine model file path.
-   * @returns {WordsEngine} Words engine instance.
+   * Loads spacing engine instance from the given file.
+   * @param {string} file Spacing engine model file path.
+   * @returns {SpacingEngine} Spacing engine instance.
    */
   static load(file) {
     if (fs.existsSync(file)) {
-      const frequencies = [];
+      const bigramFrequencies = [];
+      const spacingFrequencies = [];
       const scores = [];
       fs.readFileSync(file).toString().split('\n').forEach((value) => {
-        const [text, frequency, score] = value.split(',');
-        frequencies.push([text, Number(frequency)]);
+        const [text, bigramFrequency, spacingFrequency, score] = value.split(',');
+        bigramFrequencies.push([text, Number(bigramFrequency)]);
+        spacingFrequencies.push([text, Number(spacingFrequency)]);
         scores.push([text, Number(score)]);
       });
-      return new WordsEngine({
-        frequencies,
-        scores,
-      });
+      return new SpacingEngine({ bigramFrequencies, spacingFrequencies, scores });
     }
     return null;
   }
 
   /**
-   * Returns how many times given word appears.
-   * @param {string} word The word to be counted.
-   * @return {number} How many times given word appears.
+   * Returns spacing probabiltiy of the given bigram.
+   * @param {string} bigram The bigram to be analyzed. (must be hangul)
+   * @returns {number} A spacing probabiltiy of the given bigram.
    */
-  getFrequency(word) {
-    const { frequencies } = this;
-    return frequencies.has(word) ? frequencies.get(word) : 0;
-  }
-
-  /**
-   * Extracts a word from the given chunk.
-   * @param {string} chunk The chunk to be analyzed. (must be hangul)
-   * @returns {string} A word from the given chunk.
-   */
-  run(chunk) {
+  run(bigram) {
     const { scores } = this;
-    if (chunk.length === 1) {
-      return chunk;
-    }
-    const subtexts = extractSubtexts(chunk);
-    const scoreList = subtexts.map(subtext => [
-      subtext,
-      (scores.has(subtext) ? scores.get(subtext) : 0),
-    ]);
-    // scoreList length is always bigger than 1.
-    if (scoreList.length >= 2) {
-      const candidates = scoreList.filter(([, score], index, array) => {
-        const next = index === array.length - 1 ? 1 : array[index + 1][1];
-        return score >= next;
-      });
-      if (candidates.length === 0) {
-        return scoreList.map(([subtext, score]) => [
-          subtext,
-          score + (subtext.length / 10000), // Prevents returning empty string.
-        ]).reduce((r, a) => (a[1] > r[1] ? a : r))[0];
-      } if (candidates.length === 1) {
-        return candidates[0][0];
-      }
-      return candidates.map(([subtext, score]) => [
-        subtext,
-        score + (subtext.length / 10000), // Prevents returning empty string.
-      ]).reduce((r, a) => (a[1] > r[1] ? a : r))[0];
-    }
-    return chunk;
+    return scores.has(bigram) ? scores.get(bigram) : 0;
   }
 
   /**
-   * Saves words engine instance as a file.
-   * @param {string} file Words engine model file path.
+   * Saves spacing engine instance as a file.
+   * @param {string} file Spacing engine model file path.
    */
   save(file) {
-    const {
-      frequencies, scores,
-    } = this;
+    const { bigramFrequencies, spacingFrequencies, scores } = this;
     const content = [];
-    frequencies.forEach((frequency, text) => {
-      content.push([text, frequency, scores.get(text)].join(','));
+    bigramFrequencies.forEach((frequency, text) => {
+      content.push([text, frequency, spacingFrequencies.get(text) || 0, scores.get(text)].join(','));
     });
     fs.writeFileSync(file, content.join('\n'));
   }
@@ -127,36 +88,38 @@ class SpacingEngine extends Engine {
    * @param {Array.&lt;string>} chunks The chunks to be trained. (must be hangul)
    */
   train(chunks) {
-    const { frequencies } = this;
+    const { bigramFrequencies, spacingFrequencies } = this;
     // Extract all words and count how many words appear.
-    chunks.map(extractSubtexts).forEach((subtexts) => {
-      if (subtexts.length >= 2) { // Ignore one letter words.
-        subtexts.forEach((subtext) => {
-          if (frequencies.has(subtext)) {
-            frequencies.set(subtext, frequencies.get(subtext) + 1);
-          } else {
-            frequencies.set(subtext, 1);
-          }
-        });
+    const sentence = chunks.join(''); // No spaced
+    for (let i = 0, len = sentence.length - 1; i &lt; len; i += 1) {
+      const bigram = sentence.slice(i, i + 2);
+      if (bigramFrequencies.has(bigram)) {
+        bigramFrequencies.set(bigram, bigramFrequencies.get(bigram) + 1);
+      } else {
+        bigramFrequencies.set(bigram, 1);
+      }
+    }
+    chunks.forEach((chunk, index, array) => {
+      if (index &lt; array.length - 1) {
+        const len = chunk.length;
+        const spacedNgram = chunk[len - 1] + array[index + 1][0];
+        if (spacingFrequencies.has(spacedNgram)) {
+          spacingFrequencies.set(spacedNgram, spacingFrequencies.get(spacedNgram) + 1);
+        } else {
+          spacingFrequencies.set(spacedNgram, 1);
+        }
       }
     });
   }
 
   /** Updates calculated cohension n-gram value for each word. */
   update() {
-    const {
-      frequencies, scores,
-    } = this;
-    frequencies.forEach((frequency, subtext, array) => {
-      if (subtext.length === 1) {
-        scores.set(subtext, 0);
-      } else {
-        const exp = 1 / subtext.length;
-        scores.set(subtext, (frequency / array.get(subtext[0])) ** exp);
-      }
+    const { bigramFrequencies, spacingFrequencies, scores } = this;
+    spacingFrequencies.forEach((frequency, bigram) => {
+      scores.set(bigram, frequency / bigramFrequencies.get(bigram));
     });
   }
 }
 
 module.exports = SpacingEngine;
-</code></pre> </article> </section> </div> <nav> <h2><a href="../api\index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="../api\Engine.html">Engine</a></li><li><a href="../api\Kokoa.html">Kokoa</a></li><li><a href="../api\SpacingEngine.html">SpacingEngine</a></li><li><a href="../api\WordsEngine.html">WordsEngine</a></li></ul> </nav> <br class="clear"> <footer> Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Jul 07 2018 20:00:43 GMT+0900 (GMT+09:00) </footer> <script>prettyPrint();</script> <script src="../linenumber.1c80b311.js"> </script> </body> </html>
+</code></pre> </article> </section> </div> <nav> <h2><a href="../api\index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="../api\Engine.html">Engine</a></li><li><a href="../api\Kokoa.html">Kokoa</a></li><li><a href="../api\SpacingEngine.html">SpacingEngine</a></li><li><a href="../api\WordsEngine.html">WordsEngine</a></li></ul> </nav> <br class="clear"> <footer> Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Jul 08 2018 20:22:23 GMT+0900 (GMT+09:00) </footer> <script>prettyPrint();</script> <script src="../linenumber.1c80b311.js"> </script> </body> </html>

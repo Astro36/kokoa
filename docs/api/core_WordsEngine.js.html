@@ -35,7 +35,7 @@ const extractSubtexts = (chunk) => {
   }
   const subtexts = [];
   for (let i = 1, len = chunk.length; i &lt;= len; i += 1) {
-    subtexts.push(chunk.slice(0, i));
+    subtexts.push([chunk.slice(0, i), chunk.slice(i)]);
   }
   subtextRecipes.set(chunk, subtexts);
   return subtexts;
@@ -49,13 +49,10 @@ class WordsEngine extends Engine {
   /**
    * Creates words engine instance.
    * @param {Object} [model] Words engine model.
-   * @param {Array.&lt;Array.&lt;string|number>>} [model.frequencies]
-   *  How many times words appear.
+   * @param {Array.&lt;Array.&lt;string|number>>} [model.frequencies]  How many times words appear.
    * @param {Array.&lt;Array.&lt;string|number>>} [model.scores] Words cohension n-gram value.
    */
-  constructor({
-    frequencies, scores,
-  } = {}) {
+  constructor({ frequencies, scores } = {}) {
     super();
     this.frequencies = new Map(frequencies);
     this.scores = new Map(scores);
@@ -75,10 +72,7 @@ class WordsEngine extends Engine {
         frequencies.push([text, Number(frequency)]);
         scores.push([text, Number(score)]);
       });
-      return new WordsEngine({
-        frequencies,
-        scores,
-      });
+      return new WordsEngine({ frequencies, scores });
     }
     return null;
   }
@@ -94,40 +88,43 @@ class WordsEngine extends Engine {
   }
 
   /**
-   * Extracts a word from the given chunk.
+   * Splits the given chunk as LR parts.
    * @param {string} chunk The chunk to be analyzed. (must be hangul)
-   * @returns {string} A word from the given chunk.
+   * @returns {Array.&lt;string>} LR parts from the given chunk.
    */
   run(chunk) {
     const { scores } = this;
     if (chunk.length === 1) {
-      return chunk;
+      return [chunk];
     }
     const subtexts = extractSubtexts(chunk);
-    const scoreList = subtexts.map(subtext => [
-      subtext,
-      (scores.has(subtext) ? scores.get(subtext) : 0),
+    const scoreList = subtexts.map(([leftSubtext, rightSubtext]) => [
+      leftSubtext,
+      rightSubtext,
+      (scores.has(leftSubtext) ? scores.get(leftSubtext) : 0),
     ]);
     // scoreList length is always bigger than 1.
     if (scoreList.length >= 2) {
-      const candidates = scoreList.filter(([, score], index, array) => {
-        const next = index === array.length - 1 ? 1 : array[index + 1][1];
+      const candidates = scoreList.filter(([, , score], index, array) => {
+        const next = index === array.length - 1 ? 1 : array[index + 1][2];
         return score >= next;
       });
       if (candidates.length === 0) {
-        return scoreList.map(([subtext, score]) => [
-          subtext,
-          score + (subtext.length / 10000), // Prevents returning empty string.
-        ]).reduce((r, a) => (a[1] > r[1] ? a : r))[0];
+        return scoreList.map(([leftSubtext, rightSubtext, score]) => [
+          leftSubtext,
+          rightSubtext,
+          score + (leftSubtext.length / 10000), // Prevents returning empty string.
+        ]).reduce((r, a) => (a[2] > r[2] ? a : r)).slice(0, 2);
       } if (candidates.length === 1) {
-        return candidates[0][0];
+        return candidates[0].slice(0, 2);
       }
-      return candidates.map(([subtext, score]) => [
-        subtext,
-        score + (subtext.length / 10000), // Prevents returning empty string.
-      ]).reduce((r, a) => (a[1] > r[1] ? a : r))[0];
+      return candidates.map(([leftSubtext, rightSubtext, score]) => [
+        leftSubtext,
+        rightSubtext,
+        score + (leftSubtext.length / 10000), // Prevents returning empty string.
+      ]).reduce((r, a) => (a[2] > r[2] ? a : r)).slice(0, 2);
     }
-    return chunk;
+    return [chunk];
   }
 
   /**
@@ -135,9 +132,7 @@ class WordsEngine extends Engine {
    * @param {string} file Words engine model file path.
    */
   save(file) {
-    const {
-      frequencies, scores,
-    } = this;
+    const { frequencies, scores } = this;
     const content = [];
     frequencies.forEach((frequency, text) => {
       content.push([text, frequency, scores.get(text)].join(','));
@@ -154,7 +149,7 @@ class WordsEngine extends Engine {
     // Extract all words and count how many words appear.
     chunks.map(extractSubtexts).forEach((subtexts) => {
       if (subtexts.length >= 2) { // Ignore one letter words.
-        subtexts.forEach((subtext) => {
+        subtexts.forEach(([subtext]) => {
           if (frequencies.has(subtext)) {
             frequencies.set(subtext, frequencies.get(subtext) + 1);
           } else {
@@ -167,9 +162,7 @@ class WordsEngine extends Engine {
 
   /** Updates calculated cohension n-gram value for each word. */
   update() {
-    const {
-      frequencies, scores,
-    } = this;
+    const { frequencies, scores } = this;
     frequencies.forEach((frequency, subtext, array) => {
       if (subtext.length === 1) {
         scores.set(subtext, 0);
@@ -182,4 +175,4 @@ class WordsEngine extends Engine {
 }
 
 module.exports = WordsEngine;
-</code></pre> </article> </section> </div> <nav> <h2><a href="../api\index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="../api\Engine.html">Engine</a></li><li><a href="../api\Kokoa.html">Kokoa</a></li><li><a href="../api\SpacingEngine.html">SpacingEngine</a></li><li><a href="../api\WordsEngine.html">WordsEngine</a></li></ul> </nav> <br class="clear"> <footer> Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Jul 07 2018 20:00:43 GMT+0900 (GMT+09:00) </footer> <script>prettyPrint();</script> <script src="../linenumber.1c80b311.js"> </script> </body> </html>
+</code></pre> </article> </section> </div> <nav> <h2><a href="../api\index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="../api\Engine.html">Engine</a></li><li><a href="../api\Kokoa.html">Kokoa</a></li><li><a href="../api\SpacingEngine.html">SpacingEngine</a></li><li><a href="../api\WordsEngine.html">WordsEngine</a></li></ul> </nav> <br class="clear"> <footer> Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Jul 08 2018 20:22:23 GMT+0900 (GMT+09:00) </footer> <script>prettyPrint();</script> <script src="../linenumber.1c80b311.js"> </script> </body> </html>
