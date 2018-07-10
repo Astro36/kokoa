@@ -33,7 +33,7 @@ const options = {
   minify: true,
   target: 'browser',
   https: true,
-  logLevel: 2,
+  logLevel: 3,
   hmrPort: 0,
   sourceMaps: false,
   hmrHostname: '',

@@ -1,91 +1,43 @@
-body {
-  color: #616161;
+blockquote {
+  border-left: 5px solid #795548;
 }
 
-main {
-  background-color: #FAFAFA;
+header, main, footer {
+  padding-left: 300px;
 }
 
-header {
-  padding: 32px 0;
-}
-
-footer {
-  background-color: #F5F5F5;
-  color: #000000;
-  padding: 32px 0;
-}
-
-footer p {
-  margin: 0;
-}
-
-.button,
-button,
-input[type='button'],
-input[type='reset'],
-input[type='submit'] {
-  background-color: #795548;
-  border: 0.1rem solid #795548;
-}
-
-.button:focus,
-.button:hover,
-button:focus,
-button:hover,
-input[type='button']:focus,
-input[type='button']:hover,
-input[type='reset']:focus,
-input[type='reset']:hover,
-input[type='submit']:focus,
-input[type='submit']:hover {
-  background-color: #5D4037;
-  border-color: #5D4037;
-}
-
-input[type='email']:focus,
-input[type='number']:focus,
-input[type='password']:focus,
-input[type='search']:focus,
-input[type='tel']:focus,
-input[type='text']:focus,
-input[type='url']:focus,
-input[type='color']:focus,
-input[type='date']:focus,
-input[type='month']:focus,
-input[type='week']:focus,
-input[type='datetime']:focus,
-input[type='datetime-local']:focus,
-input:not([type]):focus,
-textarea:focus,
-select:focus {
-  border-color: #795548;
-}
-
-.github-corner:hover .octo-arm {
-  animation: octocat-wave 560ms ease-in-out
-}
-
-@keyframes octocat-wave {
-  0%,
-  100% {
-    transform: rotate(0)
-  }
-  20%,
-  60% {
-    transform: rotate(-25deg)
-  }
-  40%,
-  80% {
-    transform: rotate(10deg)
+@media only screen and (max-width : 992px) {
+  header, main, footer {
+    padding-left: 0;
   }
 }
 
-@media (max-width:500px) {
-  .github-corner:hover .octo-arm {
-    animation: none
-  }
-  .github-corner .octo-arm {
-    animation: octocat-wave 560ms ease-in-out
-  }
+.input-field label {
+  color: #795548;
+}
+
+.input-field input:focus + label {
+  color: #795548;
+}
+
+.input-field input:focus {
+  border-bottom: 1px solid #795548;
+  box-shadow: 0 1px 0 0 #795548;
+}
+
+.tabs .tab a:focus, .tabs .tab a:focus.active {
+  background: transparent;
+}
+
+.tab a.active {
+  color: #795548 !important;
+}
+
+.tabs .indicator {
+  background: #795548;
+}
+
+.tabs .tab a,
+.tabs .tab a:hover {
+  color: #5d4037;
 }
