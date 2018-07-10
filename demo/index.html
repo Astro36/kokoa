@@ -50,8 +50,9 @@
         <div class="col s12 m10 offset-m1 xl10 offset-xl1">
           <div id="get-started" class="section">
             <h4>시작하기</h4>
-            <p>KokoaNLP를 사용하기 위해서는 적절한 데이터를 학습시켜야 합니다. KokoaNLP는 사용자가 직접 학습시킬 수도 있지만 미리 학습시킨 모델을 불러올 수 있습니다.
-              <br>여기 신문기사 1000여 개를 학습시킨 모델을 준비했습니다. 어떤 방식으로 KokoaNLP를 사용하시겠습니까?</p>
+            <p>KokoaNLP를 사용하기 위해서는 적절한 데이터를 학습시켜야 합니다. KokoaNLP는 사용자가 직접 학습시킬 수도 있지만, 미리 학습시킨 모델을 불러올 수 있습니다.
+              <br>여기 신문기사 1000여 개를 학습시킨 모델을 준비했습니다.
+              <br>어떤 방식으로 KokoaNLP를 사용하시겠습니까?</p>
             <div class="row">
               <div class="col s12">
                 <ul class="tabs">
@@ -75,7 +76,7 @@
                       <div id="train-button" class="waves-effect waves-light btn brown col s2">Run</div>
                     </div>
                   </form>
-                  <blockquote>주의: KokoaNLP는 한글만 학습할 수 있습니다. 숫자, 로마자, 특수문자 등은 자동으로 학습대상에서 제외됩니다.</blockquote>
+                  <blockquote>KokoaNLP는 한글만 학습할 수 있습니다. 숫자, 로마자, 특수문자 등은 자동으로 학습대상에서 제외됩니다.</blockquote>
                   <div id="train-progressbar" class="progress brown lighten-4" style="margin: 0; visibility: hidden;">
                     <div class="indeterminate brown"></div>
                   </div>
@@ -91,11 +92,13 @@
                   </div>
                 </div>
               </div>
+              <p>모델을 불러온 뒤에도 추가로 학습을 시킬 수 있습니다. 정확도를 높이고 싶으시다면 더 많은 문서를 학습시켜 주세요.</p>
             </div>
             <div id="usage" class="section">
               <h4>사용하기</h4>
               <p>KokoaNLP를 시작하셨다면 이제 다양한 기능을 사용하실 수 있습니다.
                 <br>아래에서 원하는 기능을 선택하면 됩니다!</p>
+              <blockquote>데모의 출력값의 min count는 10으로 설정되었습니다. 단어의 학습된 횟수가 10보다 작다면 그 단어는 출력하지 않습니다.</blockquote>
               <ul class="collapsible z-depth-0">
                 <li>
                   <div class="collapsible-header">핵심문장 추출</div>
@@ -138,7 +141,12 @@
                     <form>
                       <div class="row">
                         <div class="input-field col s10">
-                          <textarea id="morphs-input" class="materialize-textarea"></textarea>
+                          <textarea id="morphs-input" class="materialize-textarea">
+                            노오란 은행잎 하나
+                            <br>호리호리 돌아 호수에 떨어져
+                            <br>소리 없이 호면을 미끄러진다
+                            <br>또 하나-
+                          </textarea>
                           <label for="morphs-input">Textarea</label>
                         </div>
                         <div id="morphs-button" class="waves-effect waves-light btn brown col s2">Run</div>
@@ -155,7 +163,9 @@
                     <form>
                       <div class="row">
                         <div class="input-field col s10">
-                          <textarea id="spacing-input" class="materialize-textarea"></textarea>
+                          <textarea id="spacing-input" class="materialize-textarea">
+                            거울속에는소리가없소
+                          </textarea>
                           <label for="spacing-input">Textarea</label>
                         </div>
                         <div id="spacing-button" class="waves-effect waves-light btn brown col s2">Run</div>
@@ -172,7 +182,14 @@
                     <form>
                       <div class="row">
                         <div class="input-field col s10">
-                          <textarea id="words-input" class="materialize-textarea"></textarea>
+                          <textarea id="words-input" class="materialize-textarea">
+                            오월 어느 날 그하로 무덥던 날
+                            <br>떨어져 누운 꽃잎마저 시들어버리고는
+                            <br>천지에 모란은 자취도 없어지고
+                            <br>뻗쳐오르던 내보람 서운케 무너졌느니
+                            <br>모란이 지고말면 그뿐 내 한해는 다 가고말아
+                            <br>삼백예순날 하냥 섭섭해 우옵네다
+                          </textarea>
                           <label for="words-input">Textarea</label>
                         </div>
                         <div id="words-button" class="waves-effect waves-light btn brown col s2">Run</div>
@@ -184,7 +201,7 @@
                 </li>
               </ul>
               <blockquote>
-                주의: 이 데모는 Firefox Quantum 61에서 테스트 되었습니다. 문제가 발생한다면 브라우저를 최신 버전으로 업데이트하십시오.
+                이 데모는 Firefox Quantum 61에서 테스트 되었습니다. 문제가 발생한다면 브라우저를 최신 버전으로 업데이트하십시오.
                 <br>Internet Explore는 지원하지 않습니다.
               </blockquote>
             </div>

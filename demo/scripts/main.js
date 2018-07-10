@@ -55,46 +55,27 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!kokoa) {
       const request = new XMLHttpRequest();
       elementLoadProgressbar.style.visibility = 'visible';
-      request.open('GET', './kokoa-data.csv', true);
+      request.open('GET', './assets/kokoa-data.csv', true);
       request.onerror = () => {
         elementLoadProgress.textContent = 'Load Error';
       };
       request.onprogress = (event) => {
-        elementLoadProgress.textContent = `Loading: ${((event.loaded / event.total) * 100).toFixed(2)}%`;
+        elementLoadProgress.textContent = `Loading: ${((event.loaded / event.total) * 99).toFixed(2)}%`;
       };
       request.onreadystatechange = () => {
         if (request.readyState === 4) {
           if (request.status === 200) {
             // Load prebuilt data.
-            const spacingModel = {
-              trigramFrequencies: [],
-              spacingFrequencies: [],
-              scores: [],
+            const worker = new Worker('load.js');
+            worker.postMessage(request.responseText);
+            worker.onmessage = (e) => {
+              const [spacingModel, wordsModel] = e.data;
+              // Init KokoaNLP.
+              const spacingEngine = new SpacingEngine(spacingModel);
+              const wordsEngine = new WordsEngine(wordsModel);
+              kokoa = new Kokoa({ spacingEngine, wordsEngine });
+              elementLoadProgressbar.style.visibility = 'hidden';
             };
-            const wordsModel = {
-              frequencies: [],
-              scores: [],
-            };
-            let isSpacingModel = true;
-            request.responseText.split('\n').forEach((value) => {
-              if (value === '---') {
-                isSpacingModel = false;
-              } else if (isSpacingModel) {
-                const [text, trigramFrequency, spacingFrequency, score] = value.split(',');
-                spacingModel.trigramFrequencies.push([text, Number(trigramFrequency)]);
-                spacingModel.spacingFrequencies.push([text, Number(spacingFrequency)]);
-                spacingModel.scores.push([text, Number(score)]);
-              } else {
-                const [text, frequency, score] = value.split(',');
-                wordsModel.frequencies.push([text, Number(frequency)]);
-                wordsModel.scores.push([text, Number(score)]);
-              }
-            });
-            // Init KokoaNLP.
-            const spacingEngine = new SpacingEngine(spacingModel);
-            const wordsEngine = new WordsEngine(wordsModel);
-            kokoa = new Kokoa({ spacingEngine, wordsEngine });
-            elementLoadProgressbar.style.visibility = 'hidden';
           }
         }
       };
@@ -114,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   elementKeysentencesButton.addEventListener('click', () => {
     if (kokoa) {
-      const content = elementKeysentencesInput.textContent;
+      const content = elementKeysentencesInput.value;
       if (content) {
         const keysentences = kokoa.keysentences(content);
         elementKeysentencesOutput.textContent = keysentences.join('<br>');
@@ -123,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   elementKeywordsButton.addEventListener('click', () => {
     if (kokoa) {
-      const content = elementKeywordsInput.textContent;
+      const content = elementKeywordsInput.value;
       if (content) {
         const keywords = kokoa.keywords(content);
         elementKeywordsOutput.textContent = keywords.join(', ');
@@ -132,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   elementMorphsButton.addEventListener('click', () => {
     if (kokoa) {
-      const content = elementMorphsInput.textContent;
+      const content = elementMorphsInput.value;
       if (content) {
         const morphs = kokoa.morphs(content);
         elementMorphsOutput.textContent = morphs.join('/');
@@ -141,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   elementSpacingButton.addEventListener('click', () => {
     if (kokoa) {
-      const content = elementSpacingInput.textContent;
+      const content = elementSpacingInput.value;
       if (content) {
         elementSpacingOutput.textContent = kokoa.spacing(content);
       }
@@ -149,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   elementWordsButton.addEventListener('click', () => {
     if (kokoa) {
-      const content = elementWordsInput.textContent;
+      const content = elementWordsInput.value;
       if (content) {
         const words = kokoa.words(content);
         elementWordsOutput.textContent = words.join(', ');
