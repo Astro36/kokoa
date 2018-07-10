@@ -26,10 +26,10 @@
     "parcel": "^1.9.4"
   },
   "scripts": {
-    "docs:api": "jsdoc lib lib/core -d temp/api & parcel build temp/api -d docs --public-url ../ --no-source-maps",
-    "docs:demo": "parcel build demo/index.html -d docs --out-file demo.html --public-url ./ --no-source-maps",
-    "lint": "eslint demo lib test",
-    "lint:fix": "eslint demo lib test --fix",
+    "docs:api": "jsdoc lib lib/core -d temp & node publish-api.js",
+    "docs:demo": "node publish-demo.js",
+    "lint": "eslint publish-api.js publish-demo.js lib test",
+    "lint:fix": "eslint publish-api.js publish-demo.js lib test --fix",
     "test": "node test",
     "train": "node bin/train.js"
   },
