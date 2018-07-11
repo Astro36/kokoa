@@ -10,13 +10,14 @@ See [CHANGELOG](./CHANGELOG.md)
 
 ## Demo
 
-See [Demo](http://astro36.github.io/Kokoa/demo.html)
+See [Demo](https://astro36.github.io/Kokoa/demo/index.html)
 
 ## Features
 
 - Train your own model.
 - Extract words from the document.
 - Find keywords and keysentences from the document.
+- Fix space on the sentences.
 
 ## Installation
 
@@ -43,10 +44,9 @@ See [API](http://astro36.github.io/Kokoa/api/index.html)
 Extract words from the given document:
 
 ```javascript
-const { Kokoa, KokoaUtil } = require('kokoanlp');
-const kokoa = new Kokoa(yourModel);
-const util = new KokoaUtil(kokoa);
-const words = util.words('태평양 전쟁 개전 당시 일본 해군의 전략은 외곽 방어망 곳곳에 배치된 지상비행장이 방어의 근거지가 되고 유사시 적을 방어선 가까이 끌어들이는 동안 항공기를 집결하여 격퇴하는 것이었다.');
+const Kokoa = require('kokoanlp');
+const kokoa = Kokoa.load('./data/kokoa.*.csv');
+const words = kokoa.words('태평양 전쟁 개전 당시 일본 해군의 전략은 외곽 방어망 곳곳에 배치된 지상비행장이 방어의 근거지가 되고 유사시 적을 방어선 가까이 끌어들이는 동안 항공기를 집결하여 격퇴하는 것이었다.');
 console.log(words); // ['태평양', '전쟁', '개전', '당시', '일본', '해군', '전략', '외곽', '방어', '곳곳에', '배치', '방어', '되고', '방어', '가까이', '동안', '항공', '것이']
 ```
 

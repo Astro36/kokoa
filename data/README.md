@@ -18,15 +18,21 @@ Crawl 조선일보 articles:
 python news_crawler.py --type 조선일보 --start-id 0003369060
 ```
 
-## Prebuilt Data
+## Prebuilt Data for Node.js
 
-- [words.7z](./words.7z)
+- [kokoa-data.7z](./kokoa-data.7z)
 
-Unzip `words.7z` as CSV file.
+Unzip `kokoa-data.7z` as CSV file.
 
-You can use the prebuilt model with [KokoaModel.loadFile(file)](https://astro36.github.io/Kokoa/api/KokoaModel.html#.loadFile) function:
+You can use the prebuilt model with [Kokoa.load(file)](https://astro36.github.io/Kokoa/api/Kokoa.html#.load) function:
 
 ```javascript
-const { KokoaModel } = require('kokoanlp');
-const model = KokoaModel.loadFile('./data/words.csv');
+const Kokoa = require('kokoanlp');
+const kokoa = Kokoa.load('./data/kokoa.*.csv');
 ```
+
+## Prebuilt Data for Web
+
+- [kokoa-data.csv](./kokoa-data.csv)
+
+See [Demo](../demo/scripts/load.js)
