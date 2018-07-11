@@ -23,6 +23,7 @@
           <li>
             <div class="user-view">
               <div class="background brown"></div>
+              <img class="circle white" src="images/kokoa.png">
               <span class="white-text name">KokoaNLP</span>
               <span class="white-text email">Unsupervised Learning Korean Kernel Object Analyzer</span>
               </a>
@@ -48,6 +49,13 @@
     <div class="container">
       <div class="row">
         <div class="col s12 m10 offset-m1 xl10 offset-xl1">
+          <div id="about">
+            <h4>소개</h4>
+            <p>KokoaNLP는 “Korean Kernel Object Analyzer Natural Language Processor”의 약자로 비지도 학습 기반의 한국어 자연어 처리 도구입니다. 간결함과 실용성을
+              지향하는 KokoaNLP는 단어 추출, 어절 분석, 키워드 추출, 띄어쓰기 교정 등의 한국어 문서 처리에 필요한 기능을 지원합니다. 프로그램의 자체 사용보다는 다른 프로그램에 이식되어 사용될
+              수 있는 라이브러리 형태로 제작되어 다양한 프로그램에서 쉽게 적용할 수 있습니다. 특히, Javascript를 이용하여 상대적으로 웹 서비스 적용이 쉬우며, API 문서를 제공과 오픈소스로 코드를
+              공개함에 따라 쉽게 개발에 참여할 수 있습니다.</p>
+          </div>
           <div id="get-started" class="section">
             <h4>시작하기</h4>
             <p>KokoaNLP를 사용하기 위해서는 적절한 데이터를 학습시켜야 합니다. KokoaNLP는 사용자가 직접 학습시킬 수도 있지만, 미리 학습시킨 모델을 불러올 수 있습니다.
@@ -141,12 +149,7 @@
                     <form>
                       <div class="row">
                         <div class="input-field col s10">
-                          <textarea id="morphs-input" class="materialize-textarea">
-                            노오란 은행잎 하나
-                            <br>호리호리 돌아 호수에 떨어져
-                            <br>소리 없이 호면을 미끄러진다
-                            <br>또 하나-
-                          </textarea>
+                          <textarea id="morphs-input" class="materialize-textarea">노오란 은행잎 하나 호리호리 돌아 호수에 떨어져 소리 없이 호면을 미끄러진다 또 하나-</textarea>
                           <label for="morphs-input">Textarea</label>
                         </div>
                         <div id="morphs-button" class="waves-effect waves-light btn brown col s2">Run</div>
@@ -163,9 +166,7 @@
                     <form>
                       <div class="row">
                         <div class="input-field col s10">
-                          <textarea id="spacing-input" class="materialize-textarea">
-                            거울속에는소리가없소
-                          </textarea>
+                          <textarea id="spacing-input" class="materialize-textarea">거울속에는소리가없소</textarea>
                           <label for="spacing-input">Textarea</label>
                         </div>
                         <div id="spacing-button" class="waves-effect waves-light btn brown col s2">Run</div>
@@ -182,14 +183,7 @@
                     <form>
                       <div class="row">
                         <div class="input-field col s10">
-                          <textarea id="words-input" class="materialize-textarea">
-                            오월 어느 날 그하로 무덥던 날
-                            <br>떨어져 누운 꽃잎마저 시들어버리고는
-                            <br>천지에 모란은 자취도 없어지고
-                            <br>뻗쳐오르던 내보람 서운케 무너졌느니
-                            <br>모란이 지고말면 그뿐 내 한해는 다 가고말아
-                            <br>삼백예순날 하냥 섭섭해 우옵네다
-                          </textarea>
+                          <textarea id="words-input" class="materialize-textarea">오월 어느 날 그하로 무덥던 날 떨어져 누운 꽃잎마저 시들어버리고는 천지에 모란은 자취도 없어지고 뻗쳐오르던 내보람 서운케 무너졌느니 모란이 지고말면 그뿐 내 한해는 다 가고말아 삼백예순날 하냥 섭섭해 우옵네다</textarea>
                           <label for="words-input">Textarea</label>
                         </div>
                         <div id="words-button" class="waves-effect waves-light btn brown col s2">Run</div>

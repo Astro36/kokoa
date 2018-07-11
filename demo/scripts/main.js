@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
               const spacingEngine = new SpacingEngine(spacingModel);
               const wordsEngine = new WordsEngine(wordsModel);
               kokoa = new Kokoa({ spacingEngine, wordsEngine });
+              elementLoadProgress.textContent = 'Loading: 100%';
               elementLoadProgressbar.style.visibility = 'hidden';
             };
           }
