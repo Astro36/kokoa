@@ -71,3 +71,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ```
 
 KokoaNLP is licensed under the [GPL 3.0](./LICENSE).
+
+[Materialize](http://materializecss.com/) is licensed under a [MIT License](https://github.com/Dogfalo/materialize/blob/master/LICENSE) by Dogfalo.
