@@ -97,9 +97,10 @@ document.addEventListener('DOMContentLoaded', () => {
   elementKeysentencesButton.addEventListener('click', () => {
     if (kokoa) {
       const content = elementKeysentencesInput.value;
+      console.log(content)
       if (content) {
         const keysentences = kokoa.keysentences(content);
-        elementKeysentencesOutput.textContent = keysentences.join('<br>');
+        elementKeysentencesOutput.innerHTML = keysentences.join('<br>');
       }
     }
   });
