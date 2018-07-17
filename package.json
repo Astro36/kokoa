@@ -1,6 +1,6 @@
 {
   "name": "kokoanlp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Korean Kernel Object Analyzer",
   "main": "lib/index.js",
   "keywords": [
@@ -18,19 +18,19 @@
     "hanguler": "^0.1.1"
   },
   "devDependencies": {
-    "eslint": "^5.0.1",
+    "eslint": "^5.1.0",
     "eslint-config-airbnb-base": "^13.0.0",
     "eslint-plugin-import": "^2.13.0",
     "jsdoc": "^3.5.5",
     "mocha": "^5.2.0",
-    "parcel": "^1.9.4"
+    "parcel": "^1.9.7"
   },
   "scripts": {
     "docs:api": "jsdoc lib lib/core -d temp & node publish-api.js",
     "docs:demo": "node publish-demo.js",
     "lint": "eslint publish-api.js publish-demo.js lib test",
     "lint:fix": "eslint publish-api.js publish-demo.js lib test --fix",
-    "test": "node test",
+    "test": "mocha",
     "train": "node bin/train.js"
   },
   "repository": {
