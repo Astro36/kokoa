@@ -24,6 +24,7 @@ let kokoa;
 onmessage = (e) => {
   const { type, input } = e.data;
   const request = new XMLHttpRequest();
+  let contentLength;
   switch (type) {
     case 'create':
       kokoa = new Kokoa();
@@ -40,7 +41,14 @@ onmessage = (e) => {
         postMessage({ type, output: false });
       };
       request.onprogress = (event) => {
-        postMessage({ type: 'load-message', output: `Loading: ${((event.loaded / event.total) * 99).toFixed(2)}%` });
+        if (!contentLength) {
+          if (event.lengthComputable) {
+            contentLength = event.total;
+          } else {
+            contentLength = Number(event.target.getResponseHeader('x-decompressed-content-length'));
+          }
+        }
+        postMessage({ type: 'load-message', output: `Loading: ${((event.loaded / contentLength) * 99).toFixed(2)}%` });
       };
       request.onreadystatechange = () => {
         if (request.readyState === 4) {
