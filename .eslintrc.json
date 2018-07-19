@@ -5,6 +5,9 @@
         "node": true,
         "mocha": true
     },
+    "globals": {
+        "M": false
+    },
     "rules": {
         "class-methods-use-this": "off",
         "import/no-extraneous-dependencies": "off"

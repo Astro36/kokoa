@@ -28,8 +28,8 @@
   "scripts": {
     "docs:api": "jsdoc lib lib/core -d temp & node publish-api.js",
     "docs:demo": "node publish-demo.js",
-    "lint": "eslint publish-api.js publish-demo.js lib test",
-    "lint:fix": "eslint publish-api.js publish-demo.js lib test --fix",
+    "lint": "eslint publish-api.js publish-demo.js bin demo lib test",
+    "lint:fix": "eslint --fix publish-api.js publish-demo.js bin demo lib test",
     "test": "mocha",
     "train": "node bin/train.js"
   },

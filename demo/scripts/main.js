@@ -14,7 +14,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
-const { Kokoa, model: { SpacingEngine, WordsEngine } } = require('../../lib')
 
 const contentExample = `인공지능이란 무엇인가, 무엇을 지능이라고 부를까를 명확하게 정의하기는 쉽지 않다. 그리고 이는 철학적인 문제가 아니고 이 문제에 어떤 대답을 선호하는가에 따라서 연구 목적과 방향이 완전히 달라진다.
 한 가지 대답은 인간의 '지능'을 필요로 하는 일을 컴퓨터가 처리할 수 있으면 그것이 바로 인공지능이라는 것이다. 또 다른 대답은 인간과 같은 방식으로 이해를 할 수 있어야 인공지능이라는 것이다. 이 두 가지 대답 역시 세부적으로는 "지능을 필요로 하는 일이란 무엇인가?" 내지는 "인간과 같은 방식이란 무엇인가?" 라는 질문에 대한 대답에 따라서 서로 다른 여러 종류의 대답을 내포하고 있다. 물론 이 두 가지 대답은 배타적이지는 않다. 인간과 같은 종류의 지능을 가지고 '지능'을 필요로 하는 일도 처리할 수 있는 컴퓨터를 만드는 것은 수많은 컴퓨터 공학자들의 꿈과 희망이겠지만, 적어도 단기간에 그런 목표에 도달할 가능성은 희박하다.
@@ -43,7 +42,50 @@ const elementWordsButton = document.getElementById('words-button');
 const elementWordsInput = document.getElementById('words-input');
 const elementWordsOutput = document.getElementById('words-output');
 
-let kokoa;
+let isInit = false;
+let isWaiting = false;
+
+const worker = new Worker('worker.js');
+worker.onmessage = (e) => {
+  const { type, output } = e.data;
+  isWaiting = false;
+  switch (type) {
+    case 'create':
+      isInit = true;
+      break;
+    case 'load':
+      if (output) {
+        elementLoadProgress.textContent = 'Complete!';
+        elementLoadProgressbar.style.visibility = 'hidden';
+      } else {
+        elementLoadProgress.textContent = 'Load Error!';
+      }
+      isInit = true;
+      break;
+    case 'load-message':
+      elementLoadProgress.textContent = output;
+      break;
+    case 'train':
+      elementTrainProgressbar.style.visibility = 'hidden';
+      break;
+    case 'keysentences':
+      elementKeysentencesOutput.innerHTML = output.join('<br>');
+      break;
+    case 'keywords':
+      elementKeywordsOutput.textContent = output.join(', ');
+      break;
+    case 'morphs':
+      elementMorphsOutput.textContent = output.join('/');
+      break;
+    case 'spacing':
+      elementSpacingOutput.textContent = output;
+      break;
+    case 'words':
+      elementWordsOutput.textContent = output.join(', ');
+      break;
+    default:
+  }
+};
 
 document.addEventListener('DOMContentLoaded', () => {
   M.Collapsible.init(document.querySelectorAll('.collapsible'));
@@ -52,114 +94,70 @@ document.addEventListener('DOMContentLoaded', () => {
   elementKeysentencesInput.textContent = contentExample;
   elementKeywordsInput.textContent = contentExample;
   elementLoadButton.addEventListener('click', () => {
-    if (!kokoa) {
-      const request = new XMLHttpRequest();
+    if (!isInit && !isWaiting) {
+      isWaiting = true;
       elementLoadProgressbar.style.visibility = 'visible';
-      request.open('GET', './assets/kokoa-data.csv', true);
-      request.onerror = () => {
-        elementLoadProgress.textContent = 'Load Error';
-      };
-      request.onprogress = (event) => {
-        elementLoadProgress.textContent = `Loading: ${((event.loaded / event.total) * 99).toFixed(2)}%`;
-      };
-      request.onreadystatechange = () => {
-        if (request.readyState === 4) {
-          if (request.status === 200) {
-            // Load prebuilt data.
-            const worker = new Worker('load.js');
-            worker.postMessage(request.responseText);
-            worker.onmessage = (e) => {
-              const [spacingModel, wordsModel] = e.data;
-              // Init KokoaNLP.
-              const spacingEngine = new SpacingEngine(spacingModel);
-              const wordsEngine = new WordsEngine(wordsModel);
-              kokoa = new Kokoa({ spacingEngine, wordsEngine });
-              elementLoadProgress.textContent = 'Loading: 100%';
-              elementLoadProgressbar.style.visibility = 'hidden';
-            };
-          }
-        }
-      };
-      request.send(null);
+      worker.postMessage({ type: 'load' });
     }
   });
   elementTrainButton.addEventListener('click', () => {
-    if (!kokoa) {
-      kokoa = new Kokoa();
-    }
-    const content = elementTrainData.textContent;
-    if (content) {
-      elementTrainProgressbar.style.visibility = 'visible';
-      kokoa.train(content);
-      elementTrainProgressbar.style.visibility = 'hidden';
+    if (!isWaiting) {
+      const content = elementTrainData.value;
+      if (isInit) {
+        if (content) {
+          isWaiting = true;
+          elementTrainProgressbar.style.visibility = 'visible';
+          worker.postMessage({ type: 'train', input: content });
+        }
+      } else {
+        isWaiting = true;
+        worker.postMessage({ type: 'create', input: content });
+      }
     }
   });
   elementKeysentencesButton.addEventListener('click', () => {
-    if (kokoa) {
+    if (isInit && !isWaiting) {
       const content = elementKeysentencesInput.value;
-      console.log(content)
       if (content) {
-        const keysentences = kokoa.keysentences(content);
-        elementKeysentencesOutput.innerHTML = keysentences.join('<br>');
+        isWaiting = true;
+        worker.postMessage({ type: 'keysentences', input: content });
       }
     }
   });
   elementKeywordsButton.addEventListener('click', () => {
-    if (kokoa) {
+    if (isInit && !isWaiting) {
       const content = elementKeywordsInput.value;
       if (content) {
-        const keywords = kokoa.keywords(content);
-        elementKeywordsOutput.textContent = keywords.join(', ');
+        isWaiting = true;
+        worker.postMessage({ type: 'keywords', input: content });
       }
     }
   });
   elementMorphsButton.addEventListener('click', () => {
-    if (kokoa) {
+    if (isInit && !isWaiting) {
       const content = elementMorphsInput.value;
       if (content) {
-        const morphs = kokoa.morphs(content);
-        elementMorphsOutput.textContent = morphs.join('/');
+        isWaiting = true;
+        worker.postMessage({ type: 'morphs', input: content });
       }
     }
   });
   elementSpacingButton.addEventListener('click', () => {
-    if (kokoa) {
+    if (isInit && !isWaiting) {
       const content = elementSpacingInput.value;
       if (content) {
-        elementSpacingOutput.textContent = kokoa.spacing(content);
+        isWaiting = true;
+        worker.postMessage({ type: 'spacing', input: content });
       }
     }
   });
   elementWordsButton.addEventListener('click', () => {
-    if (kokoa) {
+    if (isInit && !isWaiting) {
       const content = elementWordsInput.value;
       if (content) {
-        const words = kokoa.words(content);
-        elementWordsOutput.textContent = words.join(', ');
+        isWaiting = true;
+        worker.postMessage({ type: 'words', input: content });
       }
     }
   });
 });
-
-
-
-// elementRun.addEventListener('click', () => {
-//   const content = elementContent.value;
-//   // const keywords = kokoa.keywords(content);
-//   // 
-//   const morphs = kokoa.morphs(content);
-//   const words = kokoa.words(content);
-//   // elementKeywords.innerHTML = '';
-//   // keywords.forEach((keyword) => {
-//   //   const list = document.createElement('li');
-//   //   list.innerHTML = keyword;
-//   //   elementKeywords.appendChild(list);
-//   // });
-//   // elementKeysentences.innerHTML = '';
-//   // keysentences.forEach((keysentence) => {
-//   //   const list = document.createElement('li');
-//   //   list.innerHTML = keysentence;
-//   //   elementKeysentences.appendChild(list);
-//   // });
-//   elementWords.textContent = words.join(',');
-// });

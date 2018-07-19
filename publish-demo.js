@@ -21,7 +21,7 @@ const path = require('path');
 const inFile = path.join(__dirname, './demo/index.html');
 const outDir = path.join(__dirname, './docs/demo');
 const outAssetsDir = path.join(__dirname, './docs/demo/assets');
-const dataFile = path.join(outAssetsDir, 'kokoa-data.csv');
+const dataFile = path.join(outAssetsDir, 'kokoa.all.csv');
 
 const options = {
   outDir,
@@ -47,7 +47,7 @@ const options = {
     fs.mkdirSync(outAssetsDir);
   }
   if (!fs.existsSync(dataFile)) {
-    fs.copyFileSync(path.join(__dirname, './data/kokoa-data.csv'), dataFile);
+    fs.copyFileSync(path.join(__dirname, './data/kokoa.all.csv'), dataFile);
   }
   fs.readdirSync(outDir).forEach((file) => {
     if (file.includes('.') && !file.includes('.html')) {

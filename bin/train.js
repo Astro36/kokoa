@@ -14,6 +14,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>. */
 
+/* eslint no-console: 0 */
+
 const fs = require('fs');
 const path = require('path');
 
@@ -28,9 +30,9 @@ if (fs.existsSync(dir)) {
     if (title && content) {
       kokoa.train(title);
       kokoa.train(content);
-      console.log(title)
+      console.log(title);
     }
   });
   kokoa.update();
-  kokoa.save(path.join(__dirname, '../data/kokoa.*.csv'));
+  kokoa.save(path.join(__dirname, '../data/kokoa.all.csv'));
 }

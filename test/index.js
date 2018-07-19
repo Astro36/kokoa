@@ -20,7 +20,7 @@ const path = require('path');
 const Kokoa = require('../lib');
 
 describe('Kokoa', () => {
-  const kokoa = Kokoa.load(path.join(__dirname, '../data/kokoa.*.csv'));
+  const kokoa = Kokoa.load(path.join(__dirname, '../data/kokoa.all.csv'));
   describe('#chunks(document)', () => {
     it('Returns chunks from the given document.', () => {
       assert.deepEqual(kokoa.chunks('하늘에는 달이 없고 땅에는 바람이 없습니다.'), ['하늘에는', '달이', '없고', '땅에는', '바람이', '없습니다', '.']);
