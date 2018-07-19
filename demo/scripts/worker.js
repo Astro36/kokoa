@@ -40,7 +40,7 @@ onmessage = (e) => {
         postMessage({ type, output: false });
       };
       request.onprogress = (event) => {
-        if (event.lengthComputable) {
+        if (event.total) {
           postMessage({ type: 'load-message', output: `Loading: ${((event.loaded / event.total) * 100).toFixed(2)}%` });
         } else {
           postMessage({ type: 'load-message', output: 'Loading now...' });
