@@ -82,6 +82,5 @@ onmessage = (e) => {
       postMessage({ type, output: kokoa.words(input) });
       break;
     default:
-
   }
 };
