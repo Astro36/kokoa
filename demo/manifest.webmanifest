@@ -1,0 +1,26 @@
+{
+    "short_name": "KokoaNLP",
+    "name": "KokoaNLP Demo",
+    "description": "Kokoa: Korean Kernel Object Analyzer",
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#795548",
+    "theme_color": "#795548",
+    "icons": [
+        {
+            "src": "",
+            "type": "image/png",
+            "sizes": "48x48"
+        },
+        {
+            "src": "",
+            "type": "image/png",
+            "sizes": "96x96"
+        },
+        {
+            "src": "",
+            "type": "image/png",
+            "sizes": "192x192"
+        }
+    ]
+}
