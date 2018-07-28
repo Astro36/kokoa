@@ -18,10 +18,9 @@ const Bundler = require('parcel');
 const fs = require('fs');
 const path = require('path');
 
-const inDir = path.join(__dirname, './temp');
+const inDir = path.join(__dirname, './temp/index.html');
 const outDir = path.join(__dirname, './docs/api');
 const outAssetsDir = path.join(__dirname, './docs/api/assets');
-const outTempDir = path.join(__dirname, './docs/api/temp');
 
 const options = {
   outDir,
@@ -47,17 +46,13 @@ const options = {
     fs.mkdirSync(outAssetsDir);
   }
   fs.readdirSync(outDir).forEach((file) => {
+    const filePath = path.join(outDir, file);
     if (file.includes('.') && !file.includes('.html')) {
-      fs.renameSync(path.join(outDir, file), path.join(outAssetsDir, file));
+      fs.renameSync(filePath, path.join(outAssetsDir, file));
+    } else if (file.includes('.html')) {
+      fs.writeFileSync(filePath, fs.readFileSync(filePath)
+        .toString()
+        .replace(/href="assets\/([\w._$]+)\.html"/g, 'href="./$1.html"'));
     }
   });
-  fs.readdirSync(outTempDir).forEach((file) => {
-    const outTempFile = path.join(outTempDir, file);
-    fs.writeFileSync(path.join(outDir, file), fs.readFileSync(outTempFile)
-      .toString()
-      .split('href="assets/temp')
-      .join('href=".'));
-    fs.unlinkSync(outTempFile);
-  });
-  fs.rmdirSync(outTempDir);
 })();
