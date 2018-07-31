@@ -52,6 +52,9 @@
           <li>
             <a href="#usage">사용하기</a>
           </li>
+          <li>
+            <a href="#api">활용하기</a>
+          </li>
         </ul>
         <a href="#" data-target="slide-out" class="sidenav-trigger">
           <i class="material-icons brown-text">menu</i>
@@ -63,7 +66,7 @@
     <div class="container">
       <div class="row">
         <div class="col s12 m10 offset-m1 xl10 offset-xl1">
-          <div id="about">
+          <div id="about" class="section">
             <h4>소개</h4>
             <p>KokoaNLP는 “Korean Kernel Object Analyzer Natural Language Processor”의 약자로 비지도 학습 기반의 한국어 자연어 처리 도구입니다. 간결함과 실용성을
               지향하는 KokoaNLP는 단어 추출, 어절 분석, 키워드 추출, 띄어쓰기 교정 등의 한국어 문서 처리에 필요한 기능을 지원합니다. 프로그램의 자체 사용보다는 다른 프로그램에 이식되어 사용될
@@ -107,7 +110,7 @@
               <div id="load-model" class="col s12">
                 <div class="section">
                   <p>Load 버튼을 눌러서 미리 학습시킨 모델을 불러오세요</p>
-                  <span id="load-progress" class="brown-text col s10 flow-text">Click the load button.</span>
+                  <span id="load-progress" class="brown-text col s10 flow-text">KokoaNLP: 43MB</span>
                   <div id="load-button" class="waves-effect waves-light btn brown col s2">Load</div>
                   <div id="load-progressbar" class="progress brown lighten-4 col s12" style="margin-top: 16px; margin-bottom: 0; visibility: hidden;">
                     <div class="indeterminate brown"></div>
@@ -116,103 +119,108 @@
               </div>
               <p>모델을 불러온 뒤에도 추가로 학습을 시킬 수 있습니다. 정확도를 높이고 싶으시다면 더 많은 문서를 학습시켜 주세요.</p>
             </div>
-            <div id="usage" class="section">
-              <h4>사용하기</h4>
-              <p>KokoaNLP를 시작하셨다면 이제 다양한 기능을 사용하실 수 있습니다.
-                <br>아래에서 원하는 기능을 선택하면 됩니다!</p>
-              <blockquote>데모의 출력값의 min count는 10으로 설정되었습니다. 단어의 학습된 횟수가 10보다 작다면 그 단어는 출력하지 않습니다.</blockquote>
-              <ul class="collapsible z-depth-0">
-                <li>
-                  <div class="collapsible-header">핵심문장 추출</div>
-                  <div class="collapsible-body">
-                    <h5>Input</h5>
-                    <form>
-                      <div class="row">
-                        <div class="input-field col s10">
-                          <textarea id="keysentences-input" class="materialize-textarea"></textarea>
-                          <label for="keysentences-input">Textarea</label>
-                        </div>
-                        <div id="keysentences-button" class="waves-effect waves-light btn brown col s2">Run</div>
+            <blockquote>이 데모는
+              <a class="brown-text" href="https://www.mozilla.org/ko/firefox/">Firefox Quantum 61</a>에서 테스트 되었습니다. 문제가 발생한다면 브라우저를 최신 버전으로 업데이트하십시오. Internet Explore는 지원하지 않습니다.</blockquote>
+          </div>
+          <div id="usage" class="section">
+            <h4>사용하기</h4>
+            <p>KokoaNLP를 시작하셨다면 이제 다양한 기능을 사용하실 수 있습니다.
+              <br>아래에서 원하는 기능을 선택하면 됩니다!</p>
+            <blockquote>데모의 출력값의 min count는 10으로 설정되었습니다. 단어의 학습된 횟수가 10보다 작다면 그 단어는 출력하지 않습니다.</blockquote>
+            <ul class="collapsible z-depth-0">
+              <li>
+                <div class="collapsible-header">핵심문장 추출</div>
+                <div class="collapsible-body">
+                  <h5>Input</h5>
+                  <form>
+                    <div class="row">
+                      <div class="input-field col s10">
+                        <textarea id="keysentences-input" class="materialize-textarea"></textarea>
+                        <label for="keysentences-input">Textarea</label>
                       </div>
-                    </form>
-                    <h5>Output</h5>
-                    <p id="keysentences-output"></p>
-                  </div>
-                </li>
-                <li>
-                  <div class="collapsible-header">키워드 추출</div>
-                  <div class="collapsible-body">
-                    <h5>Input</h5>
-                    <form>
-                      <div class="row">
-                        <div class="input-field col s10">
-                          <textarea id="keywords-input" class="materialize-textarea"></textarea>
-                          <label for="keywords-input">Textarea</label>
-                        </div>
-                        <div id="keywords-button" class="waves-effect waves-light btn brown col s2">Run</div>
+                      <div id="keysentences-button" class="waves-effect waves-light btn brown col s2">Run</div>
+                    </div>
+                  </form>
+                  <h5>Output</h5>
+                  <p id="keysentences-output"></p>
+                </div>
+              </li>
+              <li>
+                <div class="collapsible-header">키워드 추출</div>
+                <div class="collapsible-body">
+                  <h5>Input</h5>
+                  <form>
+                    <div class="row">
+                      <div class="input-field col s10">
+                        <textarea id="keywords-input" class="materialize-textarea"></textarea>
+                        <label for="keywords-input">Textarea</label>
                       </div>
-                    </form>
-                    <h5>Output</h5>
-                    <p id="keywords-output"></p>
-                  </div>
-                </li>
-                <li>
-                  <div class="collapsible-header">어절 분석</div>
-                  <div class="collapsible-body">
-                    <h5>Input</h5>
-                    <form>
-                      <div class="row">
-                        <div class="input-field col s10">
-                          <textarea id="morphs-input" class="materialize-textarea">노오란 은행잎 하나 호리호리 돌아 호수에 떨어져 소리 없이 호면을 미끄러진다 또 하나-</textarea>
-                          <label for="morphs-input">Textarea</label>
-                        </div>
-                        <div id="morphs-button" class="waves-effect waves-light btn brown col s2">Run</div>
+                      <div id="keywords-button" class="waves-effect waves-light btn brown col s2">Run</div>
+                    </div>
+                  </form>
+                  <h5>Output</h5>
+                  <p id="keywords-output"></p>
+                </div>
+              </li>
+              <li>
+                <div class="collapsible-header">어절 분석</div>
+                <div class="collapsible-body">
+                  <h5>Input</h5>
+                  <form>
+                    <div class="row">
+                      <div class="input-field col s10">
+                        <textarea id="morphs-input" class="materialize-textarea">노오란 은행잎 하나 호리호리 돌아 호수에 떨어져 소리 없이 호면을 미끄러진다 또 하나-</textarea>
+                        <label for="morphs-input">Textarea</label>
                       </div>
-                    </form>
-                    <h5>Output</h5>
-                    <p id="morphs-output"></p>
-                  </div>
-                </li>
-                <li>
-                  <div class="collapsible-header">띄어쓰기 수정</div>
-                  <div class="collapsible-body">
-                    <h5>Input</h5>
-                    <form>
-                      <div class="row">
-                        <div class="input-field col s10">
-                          <textarea id="spacing-input" class="materialize-textarea">거울속에는소리가없소</textarea>
-                          <label for="spacing-input">Textarea</label>
-                        </div>
-                        <div id="spacing-button" class="waves-effect waves-light btn brown col s2">Run</div>
+                      <div id="morphs-button" class="waves-effect waves-light btn brown col s2">Run</div>
+                    </div>
+                  </form>
+                  <h5>Output</h5>
+                  <p id="morphs-output"></p>
+                </div>
+              </li>
+              <li>
+                <div class="collapsible-header">띄어쓰기 수정</div>
+                <div class="collapsible-body">
+                  <h5>Input</h5>
+                  <form>
+                    <div class="row">
+                      <div class="input-field col s10">
+                        <textarea id="spacing-input" class="materialize-textarea">거울속에는소리가없소</textarea>
+                        <label for="spacing-input">Textarea</label>
                       </div>
-                    </form>
-                    <h5>Output</h5>
-                    <p id="spacing-output"></p>
-                  </div>
-                </li>
-                <li>
-                  <div class="collapsible-header">단어 추출</div>
-                  <div class="collapsible-body">
-                    <h5>Input</h5>
-                    <form>
-                      <div class="row">
-                        <div class="input-field col s10">
-                          <textarea id="words-input" class="materialize-textarea">오월 어느 날 그하로 무덥던 날 떨어져 누운 꽃잎마저 시들어버리고는 천지에 모란은 자취도 없어지고 뻗쳐오르던 내보람 서운케 무너졌느니 모란이 지고말면 그뿐 내 한해는 다 가고말아 삼백예순날 하냥 섭섭해 우옵네다</textarea>
-                          <label for="words-input">Textarea</label>
-                        </div>
-                        <div id="words-button" class="waves-effect waves-light btn brown col s2">Run</div>
+                      <div id="spacing-button" class="waves-effect waves-light btn brown col s2">Run</div>
+                    </div>
+                  </form>
+                  <h5>Output</h5>
+                  <p id="spacing-output"></p>
+                </div>
+              </li>
+              <li>
+                <div class="collapsible-header">단어 추출</div>
+                <div class="collapsible-body">
+                  <h5>Input</h5>
+                  <form>
+                    <div class="row">
+                      <div class="input-field col s10">
+                        <textarea id="words-input" class="materialize-textarea">오월 어느 날 그하로 무덥던 날 떨어져 누운 꽃잎마저 시들어버리고는 천지에 모란은 자취도 없어지고 뻗쳐오르던 내보람 서운케 무너졌느니 모란이 지고말면 그뿐 내 한해는 다 가고말아 삼백예순날 하냥 섭섭해 우옵네다</textarea>
+                        <label for="words-input">Textarea</label>
                       </div>
-                    </form>
-                    <h5>Output</h5>
-                    <p id="words-output"></p>
-                  </div>
-                </li>
-              </ul>
-              <blockquote>
-                이 데모는 Firefox Quantum 61에서 테스트 되었습니다. 문제가 발생한다면 브라우저를 최신 버전으로 업데이트하십시오.
-                <br>Internet Explore는 지원하지 않습니다.
-              </blockquote>
-            </div>
+                      <div id="words-button" class="waves-effect waves-light btn brown col s2">Run</div>
+                    </div>
+                  </form>
+                  <h5>Output</h5>
+                  <p id="words-output"></p>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="api" class="section">
+            <h4>활용하기</h4>
+            <p>이 프로그램은 라이브러리 형태로 제작되었습니다. API 문서를 통해 자신의 프로그램에 쉽게 KokoaNLP를 적용할 수 있습니다.</p>
+            <a class="btn brown waves-effect waves-light" href="http://astro36.github.io/Kokoa/api/index.html">
+              <i class="material-icons left">book</i>API Docs
+            </a>
           </div>
         </div>
       </div>

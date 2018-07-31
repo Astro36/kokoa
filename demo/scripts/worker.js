@@ -53,9 +53,9 @@ onmessage = (e) => {
             const contents = request.responseText;
             const [spacingEngineContent, wordsEngineContent] = contents.split('---');
             postMessage({ type: 'load-message', output: 'Parsing spacing engines...' });
-            const spacingEngine = SpacingEngine.parse(spacingEngineContent);
+            const spacingEngine = SpacingEngine.load(spacingEngineContent);
             postMessage({ type: 'load-message', output: 'Parsing words engines...' });
-            const wordsEngine = WordsEngine.parse(wordsEngineContent);
+            const wordsEngine = WordsEngine.load(wordsEngineContent);
             // Init KokoaNLP.
             postMessage({ type: 'load-message', output: 'Initializing KokoaNLP instance...' });
             kokoa = new Kokoa({ spacingEngine, wordsEngine });

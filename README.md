@@ -2,7 +2,7 @@
 
 > Unsupervised Learning Korean Kernel Object Analyzer
 
-[![npm](https://img.shields.io/npm/v/kokoanlp.svg?style=flat-square)](https://www.npmjs.com/package/kokoanlp) [![npm](https://img.shields.io/npm/dt/kokoanlp.svg?style=flat-square)](https://www.npmjs.com/package/kokoanlp)
+[![npm](https://img.shields.io/npm/v/kokoanlp.svg?style=for-the-badge)](https://www.npmjs.com/package/kokoanlp) [![npm](https://img.shields.io/npm/dt/kokoanlp.svg?style=for-the-badge)](https://www.npmjs.com/package/kokoanlp)
 
 ## ChangeLog
 
