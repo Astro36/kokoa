@@ -4,11 +4,17 @@
 
 [![npm](https://img.shields.io/npm/v/kokoanlp.svg?style=for-the-badge)](https://www.npmjs.com/package/kokoanlp) [![npm](https://img.shields.io/npm/dt/kokoanlp.svg?style=for-the-badge)](https://www.npmjs.com/package/kokoanlp)
 
+KokoaNLP는 “Korean Kernel Object Analyzer Natural Language Processor”의 약자로 **비지도 학습 기반의 한국어 자연어 처리 도구**입니다. 간결함과 실용성을 지향하는 KokoaNLP는 단어 추출, 어절 분석, 키워드 추출, 띄어쓰기 교정 등의 한국어 문서 처리에 필요한 기능을 지원합니다.
+
+KokoaNLP의 단어 추출 알고리즘은 [Hyunjoong Kim](https://github.com/lovit)님의 [soynlp](https://github.com/lovit/soynlp)에서 아이디어를 얻어 제작되었습니다.
+
 ## ChangeLog
 
 See [CHANGELOG](./CHANGELOG.md)
 
 ## Demo
+
+![Demo Screenshot](./demo/images/screenshot.png)
 
 See [Demo](https://astro36.github.io/Kokoa/demo/index.html)
 
