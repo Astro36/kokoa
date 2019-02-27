@@ -35,12 +35,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Astro36/Kokoa.git"
+    "url": "git+https://github.com/Astro36/kokoa.git"
   },
-  "author": "Seungjae Park <astr36@naver.com>",
+  "author": "Seungjae Park <astro.psj@gmail.com>",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://github.com/Astro36/Kokoa/issues"
+    "url": "https://github.com/Astro36/kokoa/issues"
   },
-  "homepage": "https://github.com/Astro36/Kokoa#readme"
+  "homepage": "https://github.com/Astro36/kokoa#readme"
 }
